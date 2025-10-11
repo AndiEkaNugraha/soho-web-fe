@@ -7,7 +7,7 @@ export interface Props {
   description?: string;
 }
 
-const { title, description = "Ashley Creative Portfolio - Designing a Better World Today" } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ const { title, description = "Ashley Creative Portfolio - Designing a Better Wor
   <link rel="stylesheet" href="/css/plugins/swiper.min.css">
   <!-- Fancybox CSS -->
   <link rel="stylesheet" href="/css/plugins/fancybox.min.css">
-  <!-- Ashley SCSS -->
+  
   <link rel="stylesheet" href="/css/style_v.1.css">
   <link rel="stylesheet" href="/css/and_v.1.css">
   
