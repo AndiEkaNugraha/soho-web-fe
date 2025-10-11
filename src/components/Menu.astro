@@ -1,0 +1,105 @@
+---
+// Menu.astro - Navigation component
+---
+
+<!-- menu -->
+<div class="mil-menu-frame">
+  <!-- frame clone -->
+  <div class="mil-frame-top">
+    <a href="/" class="mil-logo">
+      <img src="/img/logo/soho_logo_black.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-white">
+      <img src="/img/logo/soho_logo_white.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-black">
+    </a>
+    <div class="mil-menu-btn">
+      <span></span>
+    </div>
+  </div>
+  <!-- frame clone end -->
+  <div class="container">
+    <div class="mil-menu-content">
+      <div class="row">
+        <div class="col-xl-5">
+          <nav class="mil-main-menu" id="swupMenu">
+            <ul>
+              <li class={Astro.url.pathname === '/' ? 'mil-active' : ''}>
+                <a href="/">Home</a>
+              </li>
+              <li class={Astro.url.pathname.startsWith('/service') || Astro.url.pathname.startsWith('/services') ? 'mil-has-children mil-active' : 'mil-has-children'}>
+                <a href="#.">Services</a>
+                <ul>
+                  <li><a href="/service/website-design-and-development/">Website design and development</a></li>
+                  <li><a href="/service/custom-software-development/">Custom software development</a></li>
+                  <li><a href="/service/it-consultation/">IT Consultation</a></li>
+                </ul>
+              </li>
+              <li class={Astro.url.pathname === '/contact' ? 'mil-active' : ''}>
+                <a href="/contact">Contact</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col-xl-7">
+          <div class="mil-menu-right-frame">
+            <div class="mil-animation-in">
+              <div class="mil-animation-frame">
+                <div class="mil-animation mil-position-1 mil-scale" data-value-1="2" data-value-2="2"></div>
+              </div>
+            </div>
+            <!-- <div class="mil-menu-right">
+              <div class="row">
+                <div class="col-lg-8 mil-mb-60">
+                  <h6 class="mil-muted mil-mb-30">Projects</h6>
+                  <ul class="mil-menu-list">
+                    <li><a href="/project-1" class="mil-light-soft">Interior design studio</a></li>
+                    <li><a href="/project-2" class="mil-light-soft">Home Security Camera</a></li>
+                    <li><a href="/project-3" class="mil-light-soft">Kemia Honest Skincare</a></li>
+                    <li><a href="/project-4" class="mil-light-soft">Cascade of Lava</a></li>
+                    <li><a href="/project-5" class="mil-light-soft">Air Pro by Molekule</a></li>
+                    <li><a href="/project-6" class="mil-light-soft">Tony's Chocolonely</a></li>
+                  </ul>
+                </div>
+                <div class="col-lg-4 mil-mb-60">
+                  <h6 class="mil-muted mil-mb-30">Contacts</h6>
+                  <p class="mil-light-soft mil-mb-10">USA</p>
+                  <p class="mil-sm mil-mb-30">71 Madison Ave 5th Floor, NY, USA 10013</p>
+                  <p class="mil-light-soft mil-mb-10">Phone:</p>
+                  <p class="mil-sm mil-mb-30">+7 (200) 600-30-30</p>
+                  <p class="mil-light-soft mil-mb-10">Email:</p>
+                  <p class="mil-sm mil-mb-30">info@ashley.com</p>
+                  <div class="mil-social-frame">
+                    <h6 class="mil-muted mil-mb-30">Social</h6>
+                    <a href="#." class="mil-social-btn mil-mb-30">
+                      <i class="fab fa-behance"></i>
+                      <span>Behance</span>
+                    </a>
+                    <a href="#." class="mil-social-btn mil-mb-30">
+                      <i class="fab fa-dribbble"></i>
+                      <span>Dribbble</span>
+                    </a>
+                    <a href="#." class="mil-social-btn mil-mb-30">
+                      <i class="fab fa-twitter"></i>
+                      <span>Twitter</span>
+                    </a>
+                    <a href="#." class="mil-social-btn mil-mb-30">
+                      <i class="fab fa-github"></i>
+                      <span>Github</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="mil-frame-bottom">
+    <div class="mil-current-page"></div>
+    <div class="mil-back-to-top">
+      <a href="#top" class="mil-link mil-dark mil-arrow-place">
+        <span>Back to top</span>
+      </a>
+    </div>
+  </div> -->
+</div>
+<!-- frame end -->

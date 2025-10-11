@@ -1,0 +1,242 @@
+---
+import Footer from '../components/Footer.astro';
+import Menu from '../components/Menu.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Ashley Creative Portfolio - Designing a Better World Today" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content={description}>
+  
+  <!-- Bootstrap Grid CSS -->
+  <link rel="stylesheet" href="/css/plugins/bootstrap-grid.css">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="/css/plugins/swiper.min.css">
+  <!-- Fancybox CSS -->
+  <link rel="stylesheet" href="/css/plugins/fancybox.min.css">
+  <!-- Ashley SCSS -->
+  <link rel="stylesheet" href="/css/style_v.1.css">
+  <link rel="stylesheet" href="/css/and_v.1.css">
+  
+  <title>{title}</title>
+  <link rel="icon" type="image/png" href="/fav.png">
+</head>
+<body>
+  <!-- wrapper -->
+  <div class="mil-wrapper" id="top">
+    <!-- cursor -->
+    <div class="mil-ball">
+      <span class="mil-icon-1">
+        <svg viewBox="0 0 128 128">
+          <path d="M106.1,41.9c-1.2-1.2-3.1-1.2-4.2,0c-1.2,1.2-1.2,3.1,0,4.2L116.8,61H11.2l14.9-14.9c1.2-1.2,1.2-3.1,0-4.2	c-1.2-1.2-3.1-1.2-4.2,0l-20,20c-1.2,1.2-1.2,3.1,0,4.2l20,20c0.6,0.6,1.4,0.9,2.1,0.9s1.5-0.3,2.1-0.9c1.2-1.2,1.2-3.1,0-4.2	L11.2,67h105.5l-14.9,14.9c-1.2,1.2-1.2,3.1,0,4.2c0.6,0.6,1.4,0.9,2.1,0.9s1.5-0.3,2.1-0.9l20-20c1.2-1.2,1.2-3.1,0-4.2L106.1,41.9	z" />
+        </svg>
+      </span>
+      <div class="mil-more-text">More</div>
+      <div class="mil-choose-text">Choose</div>
+    </div>
+    <!-- cursor end -->
+
+    <!-- preloader -->
+    <div class="mil-preloader">
+      <div class="mil-preloader-animation">
+        <div class="mil-pos-abs mil-animation-1">
+          <p class="mil-h3 mil-muted mil-thin">Delivering</p>
+          <p class="mil-h3 mil-muted">Scalable</p>
+          <p class="mil-h3 mil-muted mil-thin">Solutions</p>
+        </div>
+        <div class="mil-pos-abs mil-animation-2">
+          <div class="mil-reveal-frame">
+            <p class="mil-reveal-box"></p>
+            <p class="mil-h3 mil-muted mil-thin">
+              <img src="/img/logo/soho_logo_white.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-white">
+              <img src="/img/logo/soho_logo_black.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-black">
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- preloader end -->
+
+    <a href="https://wa.me/62811979362" class="chat-us" target="_blank" rel="noopener noreferrer" data-no-swup>
+      
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M3.50002 12C3.50002 7.30558 7.3056 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C10.3278 20.5 8.77127 20.0182 7.45798 19.1861C7.21357 19.0313 6.91408 18.9899 6.63684 19.0726L3.75769 19.9319L4.84173 17.3953C4.96986 17.0955 4.94379 16.7521 4.77187 16.4751C3.9657 15.176 3.50002 13.6439 3.50002 12ZM12 1.5C6.20103 1.5 1.50002 6.20101 1.50002 12C1.50002 13.8381 1.97316 15.5683 2.80465 17.0727L1.08047 21.107C0.928048 21.4637 0.99561 21.8763 1.25382 22.1657C1.51203 22.4552 1.91432 22.5692 2.28599 22.4582L6.78541 21.1155C8.32245 21.9965 10.1037 22.5 12 22.5C17.799 22.5 22.5 17.799 22.5 12C22.5 6.20101 17.799 1.5 12 1.5ZM14.2925 14.1824L12.9783 15.1081C12.3628 14.7575 11.6823 14.2681 10.9997 13.5855C10.2901 12.8759 9.76402 12.1433 9.37612 11.4713L10.2113 10.7624C10.5697 10.4582 10.6678 9.94533 10.447 9.53028L9.38284 7.53028C9.23954 7.26097 8.98116 7.0718 8.68115 7.01654C8.38113 6.96129 8.07231 7.046 7.84247 7.24659L7.52696 7.52195C6.76823 8.18414 6.3195 9.2723 6.69141 10.3741C7.07698 11.5163 7.89983 13.314 9.58552 14.9997C11.3991 16.8133 13.2413 17.5275 14.3186 17.8049C15.1866 18.0283 16.008 17.7288 16.5868 17.2572L17.1783 16.7752C17.4313 16.5691 17.5678 16.2524 17.544 15.9269C17.5201 15.6014 17.3389 15.308 17.0585 15.1409L15.3802 14.1409C15.0412 13.939 14.6152 13.9552 14.2925 14.1824Z" fill="#000000"></path> </g></svg>
+     
+    </a>
+    <!-- scrollbar progress -->
+    <div class="mil-progress-track">
+      <div class="mil-progress"></div>
+    </div>
+    <!-- scrollbar progress end -->
+
+    <!-- menu -->
+    <Menu />
+    <!-- menu end -->
+
+    <!-- curtain -->
+    <div class="mil-curtain"></div>
+    <!-- curtain end -->
+
+    <!-- frame -->
+    <div class="mil-frame">
+      <div class="mil-frame-top">
+        <a href="/" class="mil-logo">
+          <img src="/img/logo/soho_logo_black.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-white">
+          <img src="/img/logo/soho_logo_white.png" alt="logo" style="height: 40px; width: auto;" class="mil-logo-black">
+        </a>
+        <div class="mil-menu-btn">
+          <span></span>
+        </div>
+      </div>
+      <!-- <div class="mil-frame-bottom">
+        <div class="mil-current-page"></div>
+        <div class="mil-back-to-top">
+          <a href="#top" class="mil-link mil-dark mil-arrow-place">
+            <span>Back to top</span>
+          </a>
+        </div>
+      </div> -->
+    </div>
+    <!-- frame end -->
+
+    <!-- content -->
+    <div class="mil-content">
+      <div id="swupMain" class="mil-main-transition">
+        <slot />
+        
+        <Footer />
+      </div>
+    </div>
+    <!-- content end -->
+
+    <!-- hidden elements -->
+    <div class="mil-hidden-elements">
+      <!-- <div class="mil-dodecahedron">
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="mil-pentagon">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div> -->
+
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mil-arrow">
+        <path d="M 14 5.3417969 C 13.744125 5.3417969 13.487969 5.4412187 13.292969 5.6367188 L 13.207031 5.7226562 C 12.816031 6.1136563 12.816031 6.7467188 13.207031 7.1367188 L 17.070312 11 L 4 11 C 3.448 11 3 11.448 3 12 C 3 12.552 3.448 13 4 13 L 17.070312 13 L 13.207031 16.863281 C 12.816031 17.254281 12.816031 17.887344 13.207031 18.277344 L 13.292969 18.363281 C 13.683969 18.754281 14.317031 18.754281 14.707031 18.363281 L 20.363281 12.707031 C 20.754281 12.316031 20.754281 11.682969 20.363281 11.292969 L 14.707031 5.6367188 C 14.511531 5.4412187 14.255875 5.3417969 14 5.3417969 z" />
+      </svg>
+
+      <svg width="250" viewBox="0 0 300 1404" fill="none" xmlns="http://www.w3.org/2000/svg" class="mil-lines">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M1 892L1 941H299V892C299 809.71 232.29 743 150 743C67.7096 743 1 809.71 1 892ZM0 942H300V892C300 809.157 232.843 742 150 742C67.1573 742 0 809.157 0 892L0 942Z" class="mil-move" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M299 146V97L1 97V146C1 228.29 67.7096 295 150 295C232.29 295 299 228.29 299 146ZM300 96L0 96V146C0 228.843 67.1573 296 150 296C232.843 296 300 228.843 300 146V96Z" class="mil-move" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M299 1H1V1403H299V1ZM0 0V1404H300V0H0Z" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M150 -4.37115e-08L150 1404L149 1404L149 0L150 -4.37115e-08Z" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M150 1324C232.29 1324 299 1257.29 299 1175C299 1092.71 232.29 1026 150 1026C67.7096 1026 1 1092.71 1 1175C1 1257.29 67.7096 1324 150 1324ZM150 1325C232.843 1325 300 1257.84 300 1175C300 1092.16 232.843 1025 150 1025C67.1573 1025 0 1092.16 0 1175C0 1257.84 67.1573 1325 150 1325Z" class="mil-move" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M300 1175H0V1174H300V1175Z" class="mil-move" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M150 678C232.29 678 299 611.29 299 529C299 446.71 232.29 380 150 380C67.7096 380 1 446.71 1 529C1 611.29 67.7096 678 150 678ZM150 679C232.843 679 300 611.843 300 529C300 446.157 232.843 379 150 379C67.1573 379 0 446.157 0 529C0 611.843 67.1573 679 150 679Z" class="mil-move" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M299 380H1V678H299V380ZM0 379V679H300V379H0Z" class="mil-move" />
+      </svg>
+    </div>
+    <!-- hidden elements end -->
+  </div>
+  <!-- wrapper end -->
+
+  <!-- Scripts -->
+  <script is:inline src="/js/plugins/jquery.min.js"></script>
+  <script is:inline src="/js/plugins/swup.min.js"></script>
+  <script is:inline src="/js/plugins/swiper.min.js"></script>
+  <script is:inline src="/js/plugins/fancybox.min.js"></script>
+  <script is:inline src="/js/plugins/gsap.min.js"></script>
+  <script is:inline src="/js/plugins/smooth-scroll.js"></script>
+  <script is:inline src="/js/plugins/ScrollTrigger.min.js"></script>
+  <script is:inline src="/js/plugins/ScrollTo.min.js"></script>
+  <script is:inline src="/js/main.js"></script>
+</body>
+</html>

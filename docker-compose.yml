@@ -1,0 +1,27 @@
+services:
+  web:
+    image: goodboyaen/sohoweb-fe:latest
+    container_name: sohoweb-app-fe
+    ports:
+      - "4321:4321"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4321
+      - BE_API_BASE_URL=${BE_API_BASE_URL}
+      - BE_API_TOKEN=${BE_API_TOKEN}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    external: true

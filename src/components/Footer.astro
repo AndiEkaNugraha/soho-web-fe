@@ -1,0 +1,101 @@
+---
+// Footer component
+---
+
+<!-- footer -->
+<footer class="mil-dark-bg">
+  <div class="mi-invert-fix">
+    <div class="container mil-p-120-60">
+      <div class="row justify-content-between">
+        <!-- <div class="col-md-4 col-lg-4 mil-mb-60">
+
+          <div class="mil-muted mil-logo mil-up mil-mb-30">Ashley.</div>
+
+          <p class="mil-light-soft mil-up mil-mb-30">Subscribe our newsletter:</p>
+
+          <form class="mil-subscribe-form mil-up">
+            <input type="text" placeholder="Enter our email">
+            <button type="submit" class="mil-button mil-icon-button-sm mil-arrow-place"></button>
+          </form>
+
+        </div> -->
+        <div class="">
+          <div class="row justify-content-between">
+            <!-- <div class="col-md-6 col-lg-7"> -->
+            <div class="col-md-6 col-lg-5">
+              <nav class="mil-footer-menu mil-mb-60">
+                <ul>
+                  <li class={Astro.url.pathname === '/' ? 'mil-up mil-active' : ''}>
+                    <a href="/">Home</a>
+                  </li>
+                  <!-- <li class="mil-up">
+                    <a href="/portfolio-1">Portfolio</a>
+                  </li> -->
+                  <li class={Astro.url.pathname.startsWith('/service') || Astro.url.pathname.startsWith('/services') ? 'mil-up mil-active' : ''}>
+                    <a href="/services">Services</a>
+                  </li>
+                  <li class={Astro.url.pathname === '/contact' ? 'mil-up mil-active' : ''}>
+                    <a href="/contact">Contact</a>
+                  </li>
+                  <!-- <li class="mil-up">
+                    <a href="/blog">Blog</a>
+                  </li> -->
+                </ul>
+              </nav>
+
+            </div>
+            <!-- <div class="col-md-6 col-lg-5">
+
+              <ul class="mil-menu-list mil-up mil-mb-60">
+                <li><a href="#." class="mil-light-soft">Privacy Policy</a></li>
+                <li><a href="#." class="mil-light-soft">Terms and conditions</a></li>
+                <li><a href="#." class="mil-light-soft">Cookie Policy</a></li>
+                <li><a href="#." class="mil-light-soft">Careers</a></li>
+              </ul>
+
+            </div> -->
+            <div class="col-md-6 col-lg-5">
+
+              <div class="row justify-content-between">
+
+                <div>
+                  <p class="mil-light-soft mil-up"><a href="https://wa.me/62811979362" class="mil-light" data-no-swup>+62 811-979-362</a></p>
+                  <p class="mil-light-soft mil-up"><a href="mailto:business@sohodigital.id" class="mil-light">business@sohodigital.id</a></p>
+                  <p class="mil-light-soft mil-up">
+                      <br/>Podomoro city ruko gsa 8dh, jalan Letjen S. Parman
+                      <br/>015/005, Tanjung Duren Selatan, Grogol
+                      <br/>Petamburan, kota Adm. Jakarta Barat
+                      <br/>DKI Jakarta
+
+                  </p>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center flex-sm-row-reverse">
+        <div class="">
+
+          <div class="mil-vert-between">
+            <!-- <div class="mil-mb-30">
+              <ul class="mil-social-icons mil-up">
+                <li><a href="#." target="_blank" class="social-icon"> <i class="far fa-circle"></i></a></li>
+                <li><a href="#." target="_blank" class="social-icon"> <i class="far fa-circle"></i></a></li>
+                <li><a href="#." target="_blank" class="social-icon"> <i class="far fa-circle"></i></a></li>
+                <li><a href="#." target="_blank" class="social-icon"> <i class="far fa-circle"></i></a></li>
+              </ul>
+            </div> -->
+            <hr style="border-color: gray;"/>
+            <p class="mil-light-soft mil-up mt-3" style="text-align: center;">© Copyright 2025 - Soho Solusi Digital All Rights Reserved.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer end -->

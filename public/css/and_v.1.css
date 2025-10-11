@@ -1,0 +1,56 @@
+/* Banner wrapper to contain the hero image */
+.banner-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.and_bg-banner-hero {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;  /* Behind invert layer but still visible */
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.and_bg-banner-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    filter: invert(100%) grayscale(100%) brightness(2.5);  /* Counter the backdrop-filter invert */
+    transition: filter 0.3s ease;
+}
+
+.banner-wrapper:hover .and_bg-banner-hero img {
+    filter: invert(100%) grayscale(0%) brightness(1.5);  /* Remove grayscale on hover */
+    transition: filter 0.3s ease;
+}
+
+.chat-us {
+    cursor: pointer;
+    padding: 10px; position: fixed; 
+    bottom: 50px; right: 50px; 
+    width: 80px; height: 80px; z-index: 9999; 
+    background: white; border-radius: 50%; 
+    display: flex; align-items: center; 
+    justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.chat-us:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+@media screen and (max-width: 768px) {
+    .chat-us {
+        width: 60px; height: 60px; 
+        bottom: 20px; right: 20px; 
+    }
+    
+}
