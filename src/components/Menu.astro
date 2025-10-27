@@ -32,6 +32,9 @@
                   <li><a href="/service/it-consultation/">IT Consultation</a></li>
                 </ul>
               </li>
+              <li class={Astro.url.pathname.startsWith('/works') || Astro.url.pathname.startsWith('/work') ? 'mil-active' : ''}>
+                <a href="/works">Works</a>
+              </li>
               <li class={Astro.url.pathname === '/contact' ? 'mil-active' : ''}>
                 <a href="/contact">Contact</a>
               </li>
@@ -39,57 +42,59 @@
           </nav>
         </div>
         <div class="col-xl-7">
+
           <div class="mil-menu-right-frame">
-            <div class="mil-animation-in">
-              <div class="mil-animation-frame">
-                <div class="mil-animation mil-position-1 mil-scale" data-value-1="2" data-value-2="2"></div>
-              </div>
-            </div>
-            <!-- <div class="mil-menu-right">
-              <div class="row">
-                <div class="col-lg-8 mil-mb-60">
-                  <h6 class="mil-muted mil-mb-30">Projects</h6>
-                  <ul class="mil-menu-list">
-                    <li><a href="/project-1" class="mil-light-soft">Interior design studio</a></li>
-                    <li><a href="/project-2" class="mil-light-soft">Home Security Camera</a></li>
-                    <li><a href="/project-3" class="mil-light-soft">Kemia Honest Skincare</a></li>
-                    <li><a href="/project-4" class="mil-light-soft">Cascade of Lava</a></li>
-                    <li><a href="/project-5" class="mil-light-soft">Air Pro by Molekule</a></li>
-                    <li><a href="/project-6" class="mil-light-soft">Tony's Chocolonely</a></li>
-                  </ul>
-                </div>
-                <div class="col-lg-4 mil-mb-60">
-                  <h6 class="mil-muted mil-mb-30">Contacts</h6>
-                  <p class="mil-light-soft mil-mb-10">USA</p>
-                  <p class="mil-sm mil-mb-30">71 Madison Ave 5th Floor, NY, USA 10013</p>
-                  <p class="mil-light-soft mil-mb-10">Phone:</p>
-                  <p class="mil-sm mil-mb-30">+7 (200) 600-30-30</p>
-                  <p class="mil-light-soft mil-mb-10">Email:</p>
-                  <p class="mil-sm mil-mb-30">info@soho.com</p>
-                  <div class="mil-social-frame">
-                    <h6 class="mil-muted mil-mb-30">Social</h6>
-                    <a href="#." class="mil-social-btn mil-mb-30">
-                      <i class="fab fa-behance"></i>
-                      <span>Behance</span>
-                    </a>
-                    <a href="#." class="mil-social-btn mil-mb-30">
-                      <i class="fab fa-dribbble"></i>
-                      <span>Dribbble</span>
-                    </a>
-                    <a href="#." class="mil-social-btn mil-mb-30">
-                      <i class="fab fa-twitter"></i>
-                      <span>Twitter</span>
-                    </a>
-                    <a href="#." class="mil-social-btn mil-mb-30">
-                      <i class="fab fa-github"></i>
-                      <span>Github</span>
-                    </a>
+              <div class="mil-animation-in">
+                  <div class="mil-animation-frame">
+                      <div class="mil-animation mil-position-1 mil-scale" data-value-1="2" data-value-2="2"></div>
                   </div>
-                </div>
               </div>
-            </div> -->
+              <div class="mil-menu-right">
+                  <div class="row">
+                      <div class="col-lg-7 mil-mb-60">
+
+                          <h6 class="mil-muted mil-mb-30">Projects</h6>
+
+                          <ul class="mil-menu-list">
+                              <li><a href="/work/sercova" class="mil-light-soft">Sercova</a></li>
+                              <li></li>
+                              <li></li>
+                          </ul>
+
+                      </div>
+                      <div class="col-lg-5 mil-mb-60">
+
+                          <h6 class="mil-muted mil-mb-30">Social Media</h6>
+
+                          <ul class="mil-menu-list">
+                              <li><a href="https://www.instagram.com/sohosolusidigital" class="mil-light-soft">Instagram</a></li>
+                              <li><a href="https://www.linkedin.com/in/soho-solusi-digital" class="mil-light-soft">LinkedIn</a></li>
+                              <li><a href="mailto:business@sohodigital.id" class="mil-light-soft">Email</a></li>
+                              <li><a href="https://wa.me/62811979362" class="mil-light-soft">Whatsapp</a></li>
+                          </ul>
+
+                      </div>
+                  </div>
+                  <div class="mil-divider mil-mb-60"></div>
+                  <div class="row justify-content-between">
+
+                      <div class="mil-mb-60">
+
+                          <h6 class="mil-muted mil-mb-30">Office</h6>
+
+                          <p class="mil-light-soft">
+                              <br/>Podomoro city ruko gsa 8dh, jalan Letjen S. Parman
+                              <br/>015/005, Tanjung Duren Selatan, Grogol
+                              <br/>Petamburan, kota Adm. Jakarta Barat
+                              <br/>DKI Jakarta
+                          </p>
+
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
+
+      </div>
       </div>
     </div>
   </div>

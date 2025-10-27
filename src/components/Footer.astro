@@ -28,11 +28,11 @@
                   <li class={Astro.url.pathname === '/' ? 'mil-up mil-active' : ''}>
                     <a href="/">Home</a>
                   </li>
-                  <!-- <li class="mil-up">
-                    <a href="/portfolio-1">Portfolio</a>
-                  </li> -->
                   <li class={Astro.url.pathname.startsWith('/service') || Astro.url.pathname.startsWith('/services') ? 'mil-up mil-active' : ''}>
                     <a href="/services">Services</a>
+                  </li>
+                  <li class="mil-up">
+                    <a href="/works">Works</a>
                   </li>
                   <li class={Astro.url.pathname === '/contact' ? 'mil-up mil-active' : ''}>
                     <a href="/contact">Contact</a>
