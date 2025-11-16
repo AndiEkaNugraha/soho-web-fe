@@ -634,7 +634,7 @@ button
   background-color: rgb(255, 152, 0);
 }
 .mil-services-grid .mil-button.mil-icon-button-sm svg {
-  background-color: gray;
+  background-color: rgb(255, 152, 0);
 }
 .mil-button.mil-icon-button-sm svg path {
   fill: rgb(0, 0, 0);

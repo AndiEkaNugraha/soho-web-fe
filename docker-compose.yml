@@ -1,6 +1,6 @@
 services:
   web:
-    image: goodboyaen/sohoweb-fe:latest
+    image: goodboyaen/sohoweb-fe:prod.v4
     container_name: sohoweb-app-fe
     ports:
       - "4321:4321"
