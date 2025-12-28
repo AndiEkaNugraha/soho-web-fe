@@ -1467,7 +1467,7 @@ menu
     display: block;
   }
 }
-@media screen and (max-height: 800px) {
+@media screen and (max-height: 700px) {
   .mil-menu-frame .mil-menu-right-frame {
     display: none;
   }
