@@ -10,8 +10,16 @@ services:
       - PORT=4321
       - BE_API_BASE_URL=${BE_API_BASE_URL}
       - BE_API_TOKEN=${BE_API_TOKEN}
+      - DATABASE_URL=${DATABASE_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - CMS_ALLOWED_EMAILS=${CMS_ALLOWED_EMAILS}
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321"]
@@ -21,6 +29,30 @@ services:
       start_period: 40s
     networks:
       - app_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: sohoweb-db
+    environment:
+      POSTGRES_DB: sohoweb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sohoweb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
 
 networks:
   app_network:

@@ -1,0 +1,191 @@
+---
+export const prerender = false;
+
+import CMSLayout from '../../layouts/CMSLayout.astro';
+import { getSessionUser } from '../../lib/auth';
+import { query } from '../../lib/db';
+
+const user = await getSessionUser(Astro.cookies.get('session')?.value);
+if (!user) return Astro.redirect('/cms/login');
+
+const categories = await query(
+  `SELECT c.*, COUNT(a.id)::int as article_count
+   FROM categories c
+   LEFT JOIN articles a ON c.id = a.category_id
+   GROUP BY c.id
+   ORDER BY c.name`
+).then(r => r.rows).catch(() => []);
+
+function formatDate(d: string | Date) {
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<CMSLayout title="Categories" user={user} currentPage="categories">
+
+  <div style="display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start;">
+
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h2>All Categories</h2>
+        <span style="font-size:13px; color:#94a3b8;">{categories.length} categories</span>
+      </div>
+
+      {categories.length === 0 ? (
+        <div class="cms-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <p>No categories yet. Create the first one.</p>
+        </div>
+      ) : (
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Slug</th>
+              <th>Articles</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((c: any) => (
+              <tr>
+                <td style="font-weight:600; color:#0f172a;">{c.name}</td>
+                <td style="color:#94a3b8; font-family:monospace; font-size:12px;">{c.slug}</td>
+                <td>
+                  <span class="badge badge-blog">{c.article_count}</span>
+                </td>
+                <td style="color:#64748b; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                  {c.description || '—'}
+                </td>
+                <td>
+                  <div class="action-row">
+                    <button
+                      class="btn btn-secondary btn-sm"
+                      onclick={`editCategory(${c.id}, '${c.name.replace(/'/g, "\\'")}', '${(c.description||'').replace(/'/g, "\\'")}')`}
+                    >Edit</button>
+                    <button
+                      class="btn btn-danger btn-sm"
+                      onclick={`deleteCategory(${c.id}, '${c.name.replace(/'/g, "\\'")}', ${c.article_count})`}
+                    >Delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+
+    <div>
+      <div class="cms-card">
+        <div class="cms-card-header"><h2 id="form-title">New Category</h2></div>
+        <div class="cms-card-body">
+          <div id="form-alert"></div>
+          <input type="hidden" id="edit-id">
+
+          <div class="form-group">
+            <label class="form-label">Name <span style="color:#ef4444">*</span></label>
+            <input type="text" id="cat-name" class="form-input" placeholder="e.g. Technology">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="cat-desc" class="form-textarea" rows="3" placeholder="Optional description…"></textarea>
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" onclick="saveCategory()" id="save-btn" style="flex:1; justify-content:center;">
+              Create Category
+            </button>
+            <button class="btn btn-secondary" onclick="resetForm()" id="cancel-btn" style="display:none;">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</CMSLayout>
+
+<script is:inline>
+  let editingId = null;
+
+  function editCategory(id, name, desc) {
+    editingId = id;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('cat-name').value = name;
+    document.getElementById('cat-desc').value = desc;
+    document.getElementById('form-title').textContent = 'Edit Category';
+    document.getElementById('save-btn').textContent = 'Save Changes';
+    document.getElementById('cancel-btn').style.display = 'flex';
+    document.getElementById('cat-name').focus();
+  }
+
+  function resetForm() {
+    editingId = null;
+    document.getElementById('edit-id').value = '';
+    document.getElementById('cat-name').value = '';
+    document.getElementById('cat-desc').value = '';
+    document.getElementById('form-title').textContent = 'New Category';
+    document.getElementById('save-btn').textContent = 'Create Category';
+    document.getElementById('cancel-btn').style.display = 'none';
+    document.getElementById('form-alert').innerHTML = '';
+  }
+
+  async function saveCategory() {
+    const name = document.getElementById('cat-name').value.trim();
+    if (!name) { alert('Name is required.'); return; }
+
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    const alertEl = document.getElementById('form-alert');
+    alertEl.innerHTML = '';
+
+    const body = {
+      name,
+      description: document.getElementById('cat-desc').value.trim(),
+    };
+
+    try {
+      const url = editingId ? `/api/cms/categories/${editingId}` : '/api/cms/categories';
+      const method = editingId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const json = await res.json();
+      if (res.ok) {
+        location.reload();
+      } else {
+        alertEl.innerHTML = `<div class="alert alert-error">${json.error || 'Failed to save.'}</div>`;
+      }
+    } catch {
+      alertEl.innerHTML = `<div class="alert alert-error">Server error. Please try again.</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = editingId ? 'Save Changes' : 'Create Category';
+    }
+  }
+
+  async function deleteCategory(id, name, count) {
+    const msg = count > 0
+      ? `Delete "${name}"? It has ${count} article(s) — they will become uncategorized.`
+      : `Delete "${name}"? This cannot be undone.`;
+    if (!confirm(msg)) return;
+
+    try {
+      const res = await fetch(`/api/cms/categories/${id}`, { method: 'DELETE' });
+      if (res.ok) location.reload();
+      else alert('Failed to delete category.');
+    } catch {
+      alert('Server error.');
+    }
+  }
+</script>

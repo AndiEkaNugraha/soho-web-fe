@@ -57,3 +57,121 @@ p {
     }
     
 }
+/* ── Blog / Article Components ──────────────────────────────────────── */
+
+/* Card container */
+.mil-blog-card { position: relative; }
+
+/* Cover image — landscape (blog list) */
+.mil-blog-card .mil-cover {
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.mil-blog-card .mil-cover.mil-long  { padding-bottom: 55%; }
+.mil-blog-card .mil-cover.mil-square { padding-bottom: 100%; }
+.mil-blog-card .mil-cover img {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.mil-blog-card:hover .mil-cover img { transform: scale(1.05); }
+
+/* "+" overlay button */
+.mil-post-sm {
+  position: absolute; bottom: 24px; right: 24px;
+  width: 56px; height: 56px;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  transition: background 0.3s;
+  z-index: 2;
+}
+.mil-post-sm:hover { background: #1f1f2c; }
+.mil-post-sm .mil-h3 {
+  color: #1f1f2c; font-size: 22px; font-weight: 300;
+  transition: color 0.3s; line-height: 1;
+}
+.mil-post-sm:hover .mil-h3 { color: #fff; }
+.mil-add-frame {
+  position: absolute; inset: -8px;
+  border: 1px solid rgba(255,255,255,0.5);
+  pointer-events: none;
+}
+
+/* Description below cover */
+.mil-blog-card .mil-description { padding: 28px 0 0; }
+
+/* Meta row (date / author / category) */
+.mil-blog-info { margin-bottom: 0; }
+.mil-info {
+  display: flex; flex-wrap: wrap; gap: 0 28px;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1px; color: #9e9e9e;
+}
+@media (max-width: 768px) { .mil-info { flex-direction: column; gap: 4px; } }
+
+/* Sidebar */
+.mil-sidebar { padding-left: 24px; }
+@media (max-width: 991px) { .mil-sidebar { padding-left: 0; margin-top: 56px; } }
+
+/* Sidebar widget */
+.mil-widget { margin-bottom: 56px; }
+
+/* Sidebar list */
+.mil-blog-list { list-style: none; padding: 0; margin: 0; }
+.mil-blog-list li { border-bottom: 1px solid #e8e8e8; }
+.mil-blog-list li:first-child { border-top: 1px solid #e8e8e8; }
+.mil-blog-list li a {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0;
+  font-size: 13px; color: #9e9e9e;
+  text-decoration: none; transition: color 0.3s;
+}
+.mil-blog-list.mil-dark li a { color: #1f1f2c; }
+.mil-blog-list li a:hover { color: #1f1f2c; }
+.mil-blog-list li a span { color: #9e9e9e; font-size: 12px; }
+
+/* Tags */
+.mil-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.mil-tags a {
+  display: inline-block; padding: 5px 15px;
+  border: 1px solid #e0e0e0;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: #9e9e9e; text-decoration: none; transition: all 0.3s;
+}
+.mil-tags a:hover { background: #1f1f2c; border-color: #1f1f2c; color: #fff; }
+
+/* Article full content */
+.mil-blog-content { font-size: 16px; line-height: 1.85; color: #4a4a4a; }
+.mil-blog-content h1, .mil-blog-content h2, .mil-blog-content h3 {
+  color: #1f1f2c; margin-bottom: 18px; margin-top: 8px;
+}
+.mil-blog-content p { margin-bottom: 22px; }
+.mil-blog-content ul, .mil-blog-content ol { padding-left: 22px; margin-bottom: 22px; }
+.mil-blog-content li { margin-bottom: 8px; }
+.mil-blog-content a { color: #1f1f2c; text-decoration: underline; }
+.mil-blog-content blockquote {
+  border-left: 3px solid #1f1f2c;
+  padding: 14px 22px; margin: 28px 0;
+  font-style: italic; font-size: 17px;
+  color: #1f1f2c; background: #f8f8f8;
+}
+.mil-blog-content strong { color: #1f1f2c; }
+
+/* Image frame inside article content */
+.mil-image-frame { position: relative; overflow: hidden; margin-bottom: 8px; }
+.mil-image-frame > img { width: 100%; height: auto; display: block; }
+.mil-image-frame.mil-horizontal > img { aspect-ratio: 16/9; object-fit: cover; }
+
+/* Blog navigation */
+.mil-blog-nav { display: flex; align-items: center; }
+
+/* Horizontal divider (reused from theme but ensure defined) */
+.mil-divider { height: 1px; background: #e8e8e8; width: 100%; display: block; }
+
+/* Quill rendered output alignment */
+.mil-blog-content .ql-align-center { text-align: center; }
+.mil-blog-content .ql-align-right  { text-align: right; }
+.mil-blog-content .ql-align-justify { text-align: justify; }

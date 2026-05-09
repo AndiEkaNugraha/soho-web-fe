@@ -1,0 +1,339 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { query } from '../lib/db';
+
+const PAGE_SIZE = 8; // 2 featured + 6 grid
+
+const page       = Math.max(1, parseInt(Astro.url.searchParams.get('page') || '1'));
+const catFilter  = Astro.url.searchParams.get('category') || '';
+const tagFilter  = Astro.url.searchParams.get('tag') || '';
+
+let articles: any[]    = [];
+let categories: any[]  = [];
+let popularPosts: any[] = [];
+let allTags: string[]  = [];
+let total      = 0;
+let totalPages = 1;
+
+try {
+  const conds: string[]  = ["a.status = 'published'"];
+  const vals: unknown[]  = [];
+
+  if (catFilter) { conds.push(`c.slug = $${vals.length + 1}`); vals.push(catFilter); }
+  if (tagFilter) { conds.push(`a.tags ILIKE $${vals.length + 1}`); vals.push(`%${tagFilter}%`); }
+
+  const where = conds.join(' AND ');
+
+  const countRes = await query(
+    `SELECT COUNT(*)::int as total FROM articles a LEFT JOIN categories c ON a.category_id = c.id WHERE ${where}`,
+    vals
+  );
+  total      = countRes.rows[0]?.total || 0;
+  totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const offset = (Math.min(page, totalPages) - 1) * PAGE_SIZE;
+
+  const artRes = await query(
+    `SELECT a.id, a.title, a.slug, a.excerpt, a.cover_image, a.author_name, a.tags, a.published_at,
+            c.name as category_name, c.slug as category_slug
+     FROM articles a
+     LEFT JOIN categories c ON a.category_id = c.id
+     WHERE ${where}
+     ORDER BY a.published_at DESC
+     LIMIT $${vals.length + 1} OFFSET $${vals.length + 2}`,
+    [...vals, PAGE_SIZE, offset]
+  );
+  articles = artRes.rows;
+
+  // Sidebar: always all published
+  const sideRes = await query(
+    `SELECT tags, title, slug FROM articles WHERE status = 'published' ORDER BY published_at DESC LIMIT 50`
+  );
+  popularPosts = sideRes.rows.slice(0, 5);
+
+  const catRes = await query(
+    `SELECT c.name, c.slug, COUNT(a.id)::int as count
+     FROM categories c JOIN articles a ON c.id = a.category_id
+     WHERE a.status = 'published'
+     GROUP BY c.id, c.name, c.slug ORDER BY count DESC`
+  );
+  categories = catRes.rows;
+
+  const tagSet = new Set<string>();
+  sideRes.rows.forEach((a: any) => {
+    if (a.tags) a.tags.split(',').map((t: string) => t.trim()).filter(Boolean).forEach((t: string) => tagSet.add(t));
+  });
+  allTags = [...tagSet];
+} catch (e) {
+  console.error('Blog query error:', e);
+}
+
+const featured = articles.slice(0, 2);
+const rest     = articles.slice(2);
+
+function formatDate(d: string | Date) {
+  return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function pageUrl(p: number) {
+  const qs = new URLSearchParams();
+  if (p > 1)       qs.set('page', String(p));
+  if (catFilter)   qs.set('category', catFilter);
+  if (tagFilter)   qs.set('tag', tagFilter);
+  const s = qs.toString();
+  return `/blog${s ? '?' + s : ''}`;
+}
+
+// Build page range with ellipsis markers (null = gap)
+function pageRange(cur: number, tot: number): (number | null)[] {
+  if (tot <= 7) return Array.from({ length: tot }, (_, i) => i + 1);
+  const show = new Set([1, tot, cur - 1, cur, cur + 1].filter(p => p >= 1 && p <= tot));
+  const sorted = [...show].sort((a, b) => a - b);
+  const result: (number | null)[] = [];
+  sorted.forEach((p, i) => {
+    if (i > 0 && p - sorted[i - 1] > 1) result.push(null);
+    result.push(p);
+  });
+  return result;
+}
+
+const pages = pageRange(page, totalPages);
+---
+
+<BaseLayout title="Blog | Soho Solusi Digital" description="Latest news, insights and articles from Soho Solusi Digital.">
+  <div class="mil-content">
+    <div class="mil-main-transition">
+
+      <!-- banner -->
+      <div class="mil-inner-banner">
+        <div class="mil-banner-content mil-up">
+          <div class="mil-animation-frame">
+            <div class="mil-animation mil-position-4 mil-dark mil-scale" data-value-1="6" data-value-2="1.4"></div>
+          </div>
+          <div class="container">
+            <ul class="mil-breadcrumbs mil-mb-60">
+              <li><a href="/">Homepage</a></li>
+              <li><a href="/blog">Blog</a></li>
+            </ul>
+            <h1 class="mil-mb-60">Latest <span class="mil-thin">News</span></h1>
+            <a href="#blog" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
+              <span>Read more</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- banner end -->
+
+      <!-- blog -->
+      <section class="mil-p-120-60">
+        <div class="container" id="blog">
+          <div class="row justify-content-between">
+
+            <!-- Main column -->
+            <div class="col-lg-8">
+
+              {articles.length === 0 ? (
+                <p class="mil-up" style="color: #888; margin-top: 40px;">No articles published yet.</p>
+              ) : (
+                <>
+                  {/* ── Featured: first 2 articles full-width ── */}
+                  {featured.map(article => (
+                    <div class="mil-blog-card mil-mb-60">
+                      <div class="mil-cover mil-long mil-up">
+                        {article.cover_image
+                          ? <img src={article.cover_image} alt={article.title} />
+                          : <div style="background:#f0f0f0;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;">No image</div>
+                        }
+                        <a href={`/blog/${article.slug}`} class="mil-post-sm">
+                          <div class="mil-add-frame"></div>
+                          <span class="mil-h3">+</span>
+                        </a>
+                      </div>
+                      <div class="mil-description">
+                        <div class="mil-blog-info">
+                          <div class="mil-info mil-up mil-mb-30">
+                            <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
+                            {article.author_name   && <div>Author: &nbsp;<span class="mil-dark">{article.author_name}</span></div>}
+                            {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
+                          </div>
+                        </div>
+                        <h4 class="mil-up mil-mb-30">
+                          <a href={`/blog/${article.slug}`}>{article.title}</a>
+                        </h4>
+                        {article.excerpt && <p class="mil-up mil-mb-30">{article.excerpt}</p>}
+                        <a href={`/blog/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
+                          <span>Read more</span>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* ── Grid: remaining articles in 2 columns ── */}
+                  {rest.length > 0 && (
+                    <div class="row">
+                      {rest.map(article => (
+                        <div class="col-md-6 mil-mb-60">
+                          <div class="mil-blog-card">
+                            <div class="mil-cover mil-long mil-up">
+                              {article.cover_image
+                                ? <img src={article.cover_image} alt={article.title} />
+                                : <div style="background:#f0f0f0;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;">No image</div>
+                              }
+                              <a href={`/blog/${article.slug}`} class="mil-post-sm">
+                                <div class="mil-add-frame"></div>
+                                <span class="mil-h3">+</span>
+                              </a>
+                            </div>
+                            <div class="mil-description">
+                              <div class="mil-blog-info">
+                                <div class="mil-info mil-up mil-mb-20" style="font-size:12px;">
+                                  <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
+                                  {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
+                                </div>
+                              </div>
+                              <h5 class="mil-up mil-mb-20">
+                                <a href={`/blog/${article.slug}`}>{article.title}</a>
+                              </h5>
+                              <a href={`/blog/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up" style="font-size:13px;">
+                                <span>Read more</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* ── Pagination ── */}
+                  {totalPages > 1 && (
+                    <div class="mil-pagination mil-up">
+                      {page > 1
+                        ? <a href={pageUrl(page - 1)} class="mil-pag-btn">←</a>
+                        : <span class="mil-pag-btn mil-disabled">←</span>
+                      }
+
+                      {pages.map(p =>
+                        p === null
+                          ? <span class="mil-pag-gap">…</span>
+                          : p === page
+                            ? <span class="mil-pag-btn mil-active">{p}</span>
+                            : <a href={pageUrl(p)} class="mil-pag-btn">{p}</a>
+                      )}
+
+                      {page < totalPages
+                        ? <a href={pageUrl(page + 1)} class="mil-pag-btn">→</a>
+                        : <span class="mil-pag-btn mil-disabled">→</span>
+                      }
+                    </div>
+                  )}
+                </>
+              )}
+
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+              <div class="mil-sidebar">
+
+                {popularPosts.length > 0 && (
+                  <div class="mil-widget">
+                    <h4 class="mil-up mil-mb-30">Popular Posts</h4>
+                    <ul class="mil-blog-list mil-dark mil-up">
+                      {popularPosts.map((p: any) => (
+                        <li class="mil-up"><a href={`/blog/${p.slug}`}>{p.title}</a></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {categories.length > 0 && (
+                  <div class="mil-widget">
+                    <h4 class="mil-up mil-mb-30">Categories</h4>
+                    <ul class="mil-blog-list mil-dark mil-up">
+                      {categories.map((c: any) => (
+                        <li class="mil-up">
+                          <a href={`/blog?category=${c.slug}`} class={catFilter === c.slug ? 'mil-active-filter' : ''}>
+                            {c.name} <span>({c.count})</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {allTags.length > 0 && (
+                  <div class="mil-widget">
+                    <h4 class="mil-up mil-mb-30">Tags</h4>
+                    <div class="mil-tags mil-up">
+                      {allTags.map(tag => (
+                        <a href={`/blog?tag=${encodeURIComponent(tag)}`} class={tagFilter === tag ? 'mil-active-filter' : ''}>{tag}</a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .mil-pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .mil-pag-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none;
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+  }
+  .mil-pag-btn:hover:not(.mil-disabled):not(.mil-active) {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #fff;
+  }
+  .mil-pag-btn.mil-active {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #fff;
+    cursor: default;
+    pointer-events: none;
+  }
+  .mil-pag-btn.mil-disabled {
+    color: #cbd5e1;
+    border-color: #f1f5f9;
+    cursor: default;
+    pointer-events: none;
+  }
+  .mil-pag-gap {
+    font-size: 14px;
+    color: #94a3b8;
+    padding: 0 4px;
+  }
+  .mil-active-filter {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .mil-mb-20 { margin-bottom: 20px !important; }
+</style>

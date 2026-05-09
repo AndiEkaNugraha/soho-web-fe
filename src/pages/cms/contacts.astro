@@ -1,0 +1,245 @@
+---
+export const prerender = false;
+
+import CMSLayout from '../../layouts/CMSLayout.astro';
+import { getSessionUser } from '../../lib/auth';
+import { query } from '../../lib/db';
+
+const user = await getSessionUser(Astro.cookies.get('session')?.value);
+if (!user) return Astro.redirect('/cms/login');
+
+const contacts = await query(
+  `SELECT * FROM contact_submissions ORDER BY created_at DESC`
+).then(r => r.rows).catch(() => []);
+
+const totalNew      = contacts.filter((c: any) => c.status === 'new').length;
+const totalProgress = contacts.filter((c: any) => c.status === 'progress').length;
+const totalDone     = contacts.filter((c: any) => c.status === 'done').length;
+
+function formatDate(d: string | Date) {
+  return new Date(d).toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+---
+
+<CMSLayout title="Contact Submissions" user={user} currentPage="contacts">
+
+  <div class="stat-cards" style="margin-bottom: 24px;">
+    <div class="stat-card">
+      <div class="stat-label">New</div>
+      <div class="stat-value" style="color:#6366f1">{totalNew}</div>
+      <div class="stat-sub">belum ditangani</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">In Progress</div>
+      <div class="stat-value" style="color:#f59e0b">{totalProgress}</div>
+      <div class="stat-sub">sedang diproses</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Done</div>
+      <div class="stat-value" style="color:#10b981">{totalDone}</div>
+      <div class="stat-sub">selesai follow up</div>
+    </div>
+  </div>
+
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <h2>Contact Form Submissions</h2>
+      <span style="font-size:13px; color:#94a3b8;">{contacts.length} total</span>
+    </div>
+
+    {contacts.length === 0 ? (
+      <div class="cms-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <p>No contact submissions yet.</p>
+      </div>
+    ) : (
+      <div style="overflow-x: auto;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Subject</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Note</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((c: any) => (
+              <tr id={`row-${c.id}`}>
+                <td style="font-weight:600; color:#0f172a; white-space:nowrap;">{c.name}</td>
+                <td>
+                  <a href={`mailto:${c.email}`} style="color:#6366f1; text-decoration:none;">{c.email}</a>
+                </td>
+                <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#475569;">
+                  {c.subject || '—'}
+                </td>
+                <td style="color:#94a3b8; white-space:nowrap; font-size:12.5px;">{formatDate(c.created_at)}</td>
+                <td>
+                  <select
+                    class="status-select"
+                    data-id={c.id}
+                    style={`border:1.5px solid #e2e8f0; border-radius:6px; padding:4px 8px; font-size:12.5px; cursor:pointer; background:#fff; font-family:inherit; ${
+                      c.status === 'new'      ? 'color:#6366f1; border-color:#6366f1;' :
+                      c.status === 'progress' ? 'color:#f59e0b; border-color:#f59e0b;' :
+                                               'color:#10b981; border-color:#10b981;'
+                    }`}
+                  >
+                    <option value="new"      selected={c.status === 'new'}>🔵 New</option>
+                    <option value="progress" selected={c.status === 'progress'}>🟡 Progress</option>
+                    <option value="done"     selected={c.status === 'done'}>🟢 Done</option>
+                  </select>
+                </td>
+                <td style="max-width:200px;">
+                  <input
+                    type="text"
+                    class="note-input"
+                    data-id={c.id}
+                    value={c.note || ''}
+                    placeholder="Add note…"
+                    style="border:1.5px solid #e2e8f0; border-radius:6px; padding:5px 10px; font-size:12.5px; width:100%; font-family:inherit; outline:none;"
+                  />
+                </td>
+                <td>
+                  <div class="action-row">
+                    <button
+                      class="btn btn-secondary btn-sm"
+                      data-id={c.id}
+                      data-name={c.name}
+                      data-email={c.email}
+                      data-phone={c.phone || ''}
+                      data-subject={c.subject || ''}
+                      data-message={c.message}
+                      data-date={formatDate(c.created_at)}
+                      onclick="showMessage(this)"
+                    >View</button>
+                    <button
+                      class="btn btn-primary btn-sm save-btn"
+                      data-id={c.id}
+                      onclick="saveContact(this)"
+                    >Save</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+
+  <!-- Message detail modal -->
+  <div id="msg-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:#fff; border-radius:14px; padding:32px; max-width:560px; width:100%; max-height:85vh; overflow-y:auto; position:relative;">
+      <button onclick="closeModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer; color:#94a3b8; font-size:20px;">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+</CMSLayout>
+
+<style is:global>
+  #msg-modal.open { display: flex !important; }
+  .status-select:focus { outline: none; }
+  .note-input:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.08); }
+  .note-input::placeholder { color: #cbd5e1; }
+</style>
+
+<script is:inline>
+  // Status color update on change
+  document.querySelectorAll('.status-select').forEach(sel => {
+    sel.addEventListener('change', function() {
+      const colors = {
+        new:      { color: '#6366f1', border: '#6366f1' },
+        progress: { color: '#f59e0b', border: '#f59e0b' },
+        done:     { color: '#10b981', border: '#10b981' },
+      };
+      const c = colors[this.value] || colors.new;
+      this.style.color = c.color;
+      this.style.borderColor = c.border;
+    });
+  });
+
+  async function saveContact(btn) {
+    const id = btn.dataset.id;
+    const row = document.getElementById(`row-${id}`);
+    const status = row.querySelector('.status-select').value;
+    const note   = row.querySelector('.note-input').value;
+
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const res = await fetch(`/api/cms/contacts/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, note }),
+      });
+      if (res.ok) {
+        btn.textContent = 'Saved ✓';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+          btn.textContent = 'Save';
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 2000);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      alert('Failed to save. Please try again.');
+      btn.textContent = 'Save';
+      btn.disabled = false;
+    }
+  }
+
+  function showMessage(btn) {
+    const { name, email, phone, subject, message, date } = btn.dataset;
+    document.getElementById('modal-content').innerHTML = `
+      <h3 style="font-size:17px; font-weight:700; margin-bottom:20px; color:#0f172a;">Message from ${esc(name)}</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+        <div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px;">Email</div>
+          <a href="mailto:${esc(email)}" style="color:#6366f1; text-decoration:none; font-size:14px;">${esc(email)}</a>
+        </div>
+        ${phone ? `<div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px;">Phone</div>
+          <div style="font-size:14px;">${esc(phone)}</div>
+        </div>` : ''}
+        ${subject ? `<div style="grid-column:1/-1;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px;">Subject</div>
+          <div style="font-size:14px; font-weight:600;">${esc(subject)}</div>
+        </div>` : ''}
+        <div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px;">Date</div>
+          <div style="font-size:13px; color:#64748b;">${esc(date)}</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:8px;">Message</div>
+        <div style="background:#f8fafc; border-radius:8px; padding:16px; font-size:14px; line-height:1.7; white-space:pre-wrap; color:#334155;">${esc(message)}</div>
+      </div>
+      <div style="margin-top:20px;">
+        <a href="mailto:${esc(email)}?subject=Re: ${encodeURIComponent(subject || 'Your inquiry')}" class="btn btn-primary">Reply via Email</a>
+      </div>
+    `;
+    document.getElementById('msg-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('msg-modal').classList.remove('open');
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('msg-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>

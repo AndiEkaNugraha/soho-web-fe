@@ -1,0 +1,149 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { query } from '../../lib/db';
+
+const { slug } = Astro.params;
+
+let article: any = null;
+let recentArticles: any[] = [];
+
+try {
+  const res = await query(
+    `SELECT a.*, c.name as category_name
+     FROM articles a
+     LEFT JOIN categories c ON a.category_id = c.id
+     WHERE a.slug = $1 AND a.status = 'published'`,
+    [slug]
+  );
+  article = res.rows[0] || null;
+
+  if (article) {
+    const recRes = await query(
+      `SELECT id, title, slug, cover_image, excerpt, published_at, category_id
+       FROM articles
+       WHERE status = 'published' AND slug != $1
+       ORDER BY published_at DESC LIMIT 3`,
+      [slug]
+    );
+    recentArticles = recRes.rows;
+  }
+} catch (e) {
+  console.error('Article query error:', e);
+}
+
+if (!article) return Astro.redirect('/404');
+
+function formatDate(d: string | Date) {
+  return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+
+<BaseLayout title={`${article.meta_title || article.title} | Soho Solusi Digital`} description={article.meta_description || article.excerpt}>
+  <!-- content -->
+  <div class="mil-content">
+    <div class="mil-main-transition">
+
+      <!-- banner -->
+      <div class="mil-inner-banner">
+        <div class="mil-banner-content mil-up">
+          <div class="mil-animation-frame">
+            <div class="mil-animation mil-position-4 mil-dark mil-scale" data-value-1="6" data-value-2="1.4"></div>
+          </div>
+          <div class="container">
+            <ul class="mil-breadcrumbs mil-mb-60">
+              <li><a href="/">Homepage</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href={`/blog/${article.slug}`}>Post</a></li>
+            </ul>
+            <h1 class="mil-mb-60">{article.title}</h1>
+            <a href="#article" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
+              <span>Read more</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- banner end -->
+
+      <!-- article -->
+      <section class="mil-p-120-60">
+        <div class="container" id="article">
+          <div class="row">
+
+            <!-- Main article card (publication.astro style: square cover) -->
+            <div class="col-lg-8">
+              <div class="mil-blog-card mil-mb-60">
+                <div class="mil-cover mil-square mil-up">
+                  {article.cover_image
+                    ? <img src={article.cover_image} alt={article.title} />
+                    : <div style="background:#f0f0f0; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa;">No image</div>
+                  }
+                </div>
+                <div class="mil-description">
+                  <div class="mil-blog-info">
+                    <div class="mil-info mil-up mil-mb-30">
+                      {article.published_at && <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>}
+                      {article.author_name && <div>Author: &nbsp;<span class="mil-dark">{article.author_name}</span></div>}
+                      {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
+                    </div>
+                  </div>
+
+                  <div class="mil-blog-content mil-up">
+                    <div set:html={article.content}></div>
+                  </div>
+
+                  <div class="mil-divider mil-up mil-mb-60" style="margin-top: 40px;"></div>
+
+                  <div class="mil-blog-nav">
+                    <a href="/blog" class="mil-link mil-dark mil-arrow-place mil-up">
+                      <span>Back to blog</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent articles (publication.astro style: square cover, col-lg-4 sidebar) -->
+            {recentArticles.length > 0 && (
+              <div class="col-lg-4">
+                <h4 class="mil-up mil-mb-30">Recent Articles</h4>
+                {recentArticles.map(r => (
+                  <div class="mil-blog-card mil-mb-60">
+                    <div class="mil-cover mil-square mil-up">
+                      {r.cover_image
+                        ? <img src={r.cover_image} alt={r.title} />
+                        : <div style="background:#f0f0f0; position:absolute; inset:0;"></div>
+                      }
+                      <a href={`/blog/${r.slug}`} class="mil-post-sm">
+                        <div class="mil-add-frame"></div>
+                        <span class="mil-h3">+</span>
+                      </a>
+                    </div>
+                    <div class="mil-description">
+                      <div class="mil-blog-info">
+                        <div class="mil-info mil-up mil-mb-30">
+                          {r.published_at && <div>Date: &nbsp;<span class="mil-dark">{formatDate(r.published_at)}</span></div>}
+                        </div>
+                      </div>
+                      <h4 class="mil-up mil-mb-30">
+                        <a href={`/blog/${r.slug}`}>{r.title}</a>
+                      </h4>
+                      {r.excerpt && <p class="mil-up mil-mb-30">{r.excerpt}</p>}
+                      <a href={`/blog/${r.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
+                        <span>Read more</span>
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+        </div>
+      </section>
+      <!-- article end -->
+
+    </div>
+  </div>
+</BaseLayout>
