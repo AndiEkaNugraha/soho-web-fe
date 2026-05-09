@@ -1,9 +1,19 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { query } from '../lib/db';
+
+const works = await query(
+  `SELECT id, title, slug, client_name, category, year, cover_image, accent_color
+   FROM works WHERE status = 'published' ORDER BY sort_order ASC, created_at DESC`
+).then(r => r.rows).catch(() => []);
 ---
 
-<BaseLayout title="Works | Soho Solusi Digital" description="Explore our portfolio showcasing innovative solutions and successful projects that demonstrate our expertise in web design, custom software development, and IT consultation.">
-  <!-- content -->
+<BaseLayout
+  title="Works | Soho Solusi Digital"
+  description="Explore our portfolio — websites, custom software, and digital systems we've built for clients across Indonesia."
+>
   <div class="mil-content">
     <div class="mil-main-transition">
 
@@ -16,7 +26,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="container">
             <ul class="mil-breadcrumbs mil-mb-60">
               <li><a href="/">Homepage</a></li>
-              <li><a href="/portfolio-1">Portfolio</a></li>
+              <li><a href="/works">Portfolio</a></li>
             </ul>
             <h1 class="mil-mb-60">Designing a <br> Better <span class="mil-thin">World Today</span></h1>
             <a href="#portfolio" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
@@ -30,130 +40,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <!-- portfolio -->
       <section id="portfolio">
         <div class="container mil-portfolio mil-p-120-60">
-
-          <!-- <div class="mil-lines-place"></div>
-          <div class="mil-lines-place mil-lines-long"></div> -->
-
-          <div class="row justify-content-between align-items-center">
-            <div class="col-lg-6">
-              <a id="sercova" href="/work/oliv+-care" class="mil-portfolio-item mil-mb-60">
-                <div class="mil-cover-frame mil-vert mil-up"  style="padding-bottom: 72%;">
-                  <div class="mil-cover">
-                    <img src="/img/works/oliv/1.png" width="100%" height="auto"/>
-                  </div>
+          {works.length === 0 ? (
+            <p class="mil-up" style="color:#888; padding: 60px 0;">No published projects yet.</p>
+          ) : (
+            <div class="row justify-content-between align-items-center">
+              {works.map((w: any) => (
+                <div class="col-lg-6">
+                  <a href={`/work/${w.slug}`} class="mil-portfolio-item mil-mb-60">
+                    <div class="mil-cover-frame mil-vert mil-up" style="padding-bottom: 72%;">
+                      <div class="mil-cover">
+                        {w.cover_image
+                          ? <img src={w.cover_image} width="100%" height="auto" alt={w.title} />
+                          : <div style="background:#f0f0f0; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa;">No image</div>
+                        }
+                      </div>
+                    </div>
+                    <div class="mil-descr">
+                      <div class="mil-labels mil-up mil-mb-15">
+                        {w.category && (
+                          <div class="mil-label mil-upper mil-accent" style={`color: ${w.accent_color || '#000'};`}>
+                            {w.category}
+                          </div>
+                        )}
+                        {w.year && <div class="mil-label mil-upper">{w.year}</div>}
+                      </div>
+                      <h4 class="mil-up">{w.title}</h4>
+                    </div>
+                  </a>
                 </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div style="color: crimson;" class="mil-label mil-upper mil-accent">Website Design & Development</div>
-                    <div class="mil-label mil-upper">2025</div>
-                  </div>
-                  <h4 class="mil-up">Oliv+ Care™</h4>
-                </div>
-              </a>
+              ))}
             </div>
-            <div class="col-lg-6">
-              <a id="sercova" href="/work/sercova" class="mil-portfolio-item mil-mb-60">
-                <div class="mil-cover-frame mil-vert mil-up"  style="padding-bottom: 72%;">
-                  <div class="mil-cover">
-                    <img src="/img/works/sercova/sercova1.png" width="100%" height="auto"/>
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div style="color: darkolivegreen;" class="mil-label mil-upper mil-accent">Website Design & Development</div>
-                    <div class="mil-label mil-upper">2025</div>
-                  </div>
-                  <h4 class="mil-up">Sercova</h4>
-                </div>
-              </a>
-            </div>
-            <div class="col-lg-6">
-              <a id="angkasa-pura-property" href="/work/angkasa-pura-property" class="mil-portfolio-item mil-mb-60">
-                <div class="mil-cover-frame mil-vert mil-up"  style="padding-bottom: 72%;">
-                  <div class="mil-cover">
-                    <img src="/img/works/iasp/1.png" width="100%" height="auto"/>
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div style="color:indigo;" class="mil-label mil-upper mil-accent">Website Design & Development</div>
-                    <!-- <div class="mil-label mil-upper">2025</div> -->
-                  </div>
-                  <h4 class="mil-up">Angkasa Pura Property</h4>
-                </div>
-              </a>
-            </div>
-            <!-- <div class="col-lg-6">
-              <a href="/project-3" class="mil-portfolio-item mil-parallax mil-mb-60" data-value-1="60" data-value-2="-60">
-                <div class="mil-cover-frame mil-hori mil-up">
-                  <div class="mil-cover">
-                    <img src="/img/works/3.jpg" alt="cover">
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div class="mil-label mil-upper mil-accent">Custom Software Development</div>
-                    <div class="mil-label mil-upper">2025</div>
-                  </div>
-                  <h4 class="mil-up">Event Organizer</h4>
-                </div>
-              </a>
-            </div> -->
-            <!-- <div class="col-lg-5">
-              <a href="/project-4" class="mil-portfolio-item mil-mb-60">
-                <div class="mil-cover-frame mil-vert mil-up">
-                  <div class="mil-cover">
-                    <img src="/img/works/4.jpg" alt="cover">
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div class="mil-label mil-upper mil-accent">Branding</div>
-                    <div class="mil-label mil-upper">may 24 2023</div>
-                  </div>
-                  <h4 class="mil-up">Cascade of Lava</h4>
-                </div>
-              </a>
-            </div>
-            <div class="col-lg-6">
-              <a href="/project-5" class="mil-portfolio-item mil-parallax mil-mb-60" data-value-1="-60" data-value-2="60">
-                <div class="mil-cover-frame mil-hori mil-up">
-                  <div class="mil-cover">
-                    <img src="/img/works/5.jpg" alt="cover">
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div class="mil-label mil-upper mil-accent">Design</div>
-                    <div class="mil-label mil-upper">may 24 2023</div>
-                  </div>
-                  <h4 class="mil-up">Air Pro by Molekule</h4>
-                </div>
-              </a>
-            </div>
-            <div class="col-lg-5">
-              <a href="/project-6" class="mil-portfolio-item mil-mb-60">
-                <div class="mil-cover-frame mil-vert mil-up">
-                  <div class="mil-cover">
-                    <img src="/img/works/6.jpg" alt="cover">
-                  </div>
-                </div>
-                <div class="mil-descr">
-                  <div class="mil-labels mil-up mil-mb-15">
-                    <div class="mil-label mil-upper mil-accent">Branding</div>
-                    <div class="mil-label mil-upper">may 24 2023</div>
-                  </div>
-                  <h4 class="mil-up">Tony's Chocolonely</h4>
-                </div>
-              </a>
-            </div> -->
-          </div>
+          )}
         </div>
       </section>
       <!-- portfolio end -->
 
     </div>
   </div>
-  <!-- content -->
-
 </BaseLayout>

@@ -88,7 +88,7 @@ const { title, user, currentPage } = Astro.props;
       position: sticky; top: 0; z-index: 50;
     }
     .cms-topbar h1 { font-size: 17px; font-weight: 700; color: #0f172a; }
-    .cms-content { padding: 28px; flex: 1; }
+    .cms-content { padding: 28px; flex: 1; max-width: 1400px; width: 100%; }
 
     /* ── Cards ── */
     .cms-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
@@ -192,6 +192,15 @@ const { title, user, currentPage } = Astro.props;
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
           </svg>
           <span>Categories</span>
+        </a>
+
+        <span class="cms-nav-label" style="margin-top:12px">Portfolio</span>
+        <a href="/cms/works" class={currentPage === 'works' ? 'active' : ''}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Works</span>
         </a>
 
         <span class="cms-nav-label" style="margin-top:12px">Inquiries</span>

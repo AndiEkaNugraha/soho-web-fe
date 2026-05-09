@@ -1,0 +1,161 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { query } from '../../lib/db';
+
+const { slug } = Astro.params;
+
+const workRes = await query('SELECT * FROM works WHERE slug = $1 AND status = $2', [slug, 'published']).catch(() => ({ rows: [] }));
+const work = workRes.rows[0];
+
+if (!work) return Astro.redirect('/404');
+
+const imagesRes = await query(
+  'SELECT * FROM work_images WHERE work_id = $1 ORDER BY sort_order ASC, id ASC',
+  [work.id]
+).catch(() => ({ rows: [] }));
+const images = imagesRes.rows;
+
+// Group consecutive half images into pairs for side-by-side rendering
+type GalleryItem =
+  | { kind: 'single'; item: any }
+  | { kind: 'pair';   items: [any, any] };
+
+const gallery: GalleryItem[] = [];
+let i = 0;
+while (i < images.length) {
+  const img = images[i];
+  if (img.layout === 'half' && i + 1 < images.length && images[i + 1].layout === 'half') {
+    gallery.push({ kind: 'pair', items: [img, images[i + 1]] });
+    i += 2;
+  } else {
+    gallery.push({ kind: 'single', item: img });
+    i++;
+  }
+}
+
+// Render highlight_body paragraphs (split on blank lines)
+const highlightParagraphs = (work.highlight_body || '')
+  .split(/\n\n+/)
+  .map((p: string) => p.trim())
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title={`${work.meta_title || work.title} | Soho Solusi Digital`}
+  description={work.meta_description || `${work.client_name ? work.client_name + ' — ' : ''}${work.category || 'Portfolio'} by Soho Solusi Digital`}
+  ogImage={work.cover_image || ''}
+>
+  <!-- banner -->
+  <div class="mil-inner-banner" style={`background-color: ${work.bg_color};`}>
+    <div class="mil-banner-content mil-up">
+      <div class="mil-animation-frame">
+        <div class="mil-animation mil-position-4 mil-dark mil-scale"></div>
+      </div>
+      <div class="container">
+        <ul class="mil-breadcrumbs mil-mb-60">
+          <li><a href="/">Homepage</a></li>
+          <li><a href="/works">Works</a></li>
+          <li>{work.client_name || work.title}</li>
+        </ul>
+        <h1 class="mil-mb-60">{work.category ? `${work.category} ` : ''}<span class="mil-thin">{work.client_name || work.title}</span></h1>
+        <a href="#project" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
+          <span>Read more</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- banner end -->
+
+  <!-- project info -->
+  <section class="mil-p-120-0" style={`background-color: ${work.bg_color};`}>
+    <div class="container mil-p-0-120" id="project">
+
+      {/* Banner media */}
+      {work.banner_url && (
+        <div class="mil-image-frame mil-horizontal mil-up" style="padding-bottom:0;">
+          {work.banner_type === 'video'
+            ? <video src={work.banner_url} autoplay loop muted playsinline width="100%" height="auto"></video>
+            : <img src={work.banner_url} alt={work.title} width="100%" height="auto" />
+          }
+        </div>
+      )}
+
+      <div class="mil-info mil-up" style="margin-top:24px;">
+        {work.client_name && <div>Client: &nbsp;<span class="mil-dark">{work.client_name}</span></div>}
+        {work.year        && <div>Date: &nbsp;<span class="mil-dark">{work.year}</span></div>}
+      </div>
+
+      {/* Overview */}
+      {(work.logo_url || work.website_url || work.overview) && (
+        <div class="row justify-content-between" style="margin-block: 2rem;">
+          <article class="overview-id" style="line-height: 40px;">
+            {(work.logo_url || work.website_url) && (
+              <div style="text-align:center; margin-top:30px; margin-bottom:50px;">
+                {work.logo_url && <img src={work.logo_url} alt={`${work.client_name} Logo`} width="300" height="auto" />}
+                {work.website_url && (
+                  <a target="_blank" rel="noopener noreferrer" href={work.website_url} data-no-swup
+                     style="display:block; font-size:24px;">
+                    {work.website_url.replace(/^https?:\/\//, '')}
+                  </a>
+                )}
+              </div>
+            )}
+            {work.overview && (
+              <>
+                <h3 class="mb-2"><strong>Overview</strong></h3>
+                <div set:html={work.overview} style="font-size:22px; color:#1A1A1A;"></div>
+              </>
+            )}
+          </article>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {/* Gallery */}
+  {gallery.length > 0 && (
+    <div class="d-grid" style={`background-color: ${work.grid_bg_color};`}>
+      {gallery.map(entry => {
+        if (entry.kind === 'single') {
+          const img = entry.item;
+          return img.type === 'video'
+            ? <video src={img.url} style="object-position:center;" width="100%" height="auto" autoplay loop muted playsinline></video>
+            : <img src={img.url} alt={img.alt_text || work.title} style="object-position:center;" width="100%" height="auto" />;
+        } else {
+          return (
+            <div style="display:flex;">
+              {entry.items.map(img =>
+                img.type === 'video'
+                  ? <video src={img.url} style="object-position:center;object-fit:cover;width:50%;" width="50%" height="auto" autoplay loop muted playsinline></video>
+                  : <img src={img.url} alt={img.alt_text || work.title} style="object-position:center;object-fit:cover;width:50%;" width="50%" height="auto" />
+              )}
+            </div>
+          );
+        }
+      })}
+    </div>
+  )}
+
+  {/* Highlight section */}
+  {(work.highlight_quote || highlightParagraphs.length > 0) && (
+    <section style={`background-color: ${work.grid_bg_color};`}>
+      <div class="container" style="margin-block: 8rem;">
+        <div class="row justify-content-between mil-p-90-120">
+          <div class="col-lg-5">
+            <h3 class="mil-up mil-mb-60">{work.highlight_quote || 'Simplicity, elegance, innovation!'}</h3>
+          </div>
+          <div class="col-lg-6">
+            {highlightParagraphs.map((p: string, idx: number) => (
+              <p class="mil-up" class:list={[idx < highlightParagraphs.length - 1 ? 'mil-mb-30' : 'mil-mb-60']}>{p}</p>
+            ))}
+            <div class="mil-up">
+              <a href="/contact" class="mil-button mil-arrow-place"><span>Get in touch</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

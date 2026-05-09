@@ -1,0 +1,400 @@
+---
+export const prerender = false;
+
+import CMSLayout from '../../../layouts/CMSLayout.astro';
+import { getSessionUser } from '../../../lib/auth';
+import { query } from '../../../lib/db';
+
+const user = await getSessionUser(Astro.cookies.get('session')?.value);
+if (!user) return Astro.redirect('/cms/login');
+
+const { id } = Astro.params;
+const workRes = await query('SELECT * FROM works WHERE id = $1', [id]).catch(() => ({ rows: [] }));
+const work = workRes.rows[0];
+if (!work) return Astro.redirect('/cms/works');
+
+const overviewJson = JSON.stringify(work.overview || '');
+const workId = work.id;
+---
+
+<CMSLayout title={`Edit: ${work.title}`} user={user} currentPage="works">
+  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css">
+  <style is:global>
+    .ql-editor { min-height: 260px; font-size: 15px; font-family: inherit; }
+    .ql-toolbar { border-radius: 7px 7px 0 0; border-color: #e2e8f0 !important; }
+    .ql-container { border-radius: 0 0 7px 7px; border-color: #e2e8f0 !important; }
+    .gallery-item { display:grid; grid-template-columns:72px 1fr auto; gap:12px; align-items:center; padding:12px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; background:#fff; }
+    .gallery-thumb { width:72px; height:50px; object-fit:cover; border-radius:4px; border:1px solid #e2e8f0; display:block; flex-shrink:0; }
+    .gallery-thumb-video { width:72px; height:50px; border-radius:4px; background:#0f172a; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; flex-shrink:0; }
+    .gallery-controls { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+    .gallery-fields { display:flex; flex-direction:column; gap:8px; min-width:0; }
+    .gallery-field-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .gallery-field-row select { padding:5px 8px; border:1.5px solid #e2e8f0; border-radius:6px; font-size:12.5px; font-family:inherit; flex-shrink:0; }
+    .gallery-field-row input { min-width:0; }
+    .add-image-box { border:2px dashed #e2e8f0; border-radius:8px; padding:16px; margin-top:12px; }
+  </style>
+
+  <div style="margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <a href="/cms/works" class="btn btn-secondary btn-sm">← Back to Works</a>
+    <div style="display:flex;gap:8px;">
+      <a href={`/work/${work.slug}`} target="_blank" class="btn btn-secondary btn-sm">View Live →</a>
+      <button class="btn btn-danger btn-sm" onclick={`deleteWork(${work.id},'${work.title.replace(/'/g,"\\'")}' )`}>Delete</button>
+    </div>
+  </div>
+
+  <div id="alert-container"></div>
+
+  <form id="work-form">
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px; align-items:start;">
+
+      <!-- Left column -->
+      <div>
+        <div class="cms-card" style="margin-bottom:20px;">
+          <div class="cms-card-header"><h2>Basic Info</h2></div>
+          <div class="cms-card-body">
+            <div class="form-group">
+              <label class="form-label">Project Title <span style="color:#ef4444">*</span></label>
+              <input type="text" id="title" class="form-input" value={work.title} required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Slug</label>
+                <input type="text" id="slug" class="form-input" value={work.slug}>
+                <div class="form-hint">URL: /work/{work.slug}</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Client Name</label>
+                <input type="text" id="client_name" class="form-input" value={work.client_name ?? ''}>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Category / Service</label>
+                <input type="text" id="category" class="form-input" value={work.category ?? ''}>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Year</label>
+                <input type="text" id="year" class="form-input" value={work.year ?? ''}>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website URL</label>
+              <input type="text" id="website_url" class="form-input" value={work.website_url ?? ''}>
+            </div>
+          </div>
+        </div>
+
+        <div class="cms-card" style="margin-bottom:20px;">
+          <div class="cms-card-header"><h2>Overview</h2></div>
+          <div class="cms-card-body">
+            <div id="quill-editor"></div>
+            <input type="hidden" id="overview">
+          </div>
+        </div>
+
+        <div class="cms-card" style="margin-bottom:20px;">
+          <div class="cms-card-header"><h2>Highlight Section</h2></div>
+          <div class="cms-card-body">
+            <div class="form-group">
+              <label class="form-label">Quote</label>
+              <input type="text" id="highlight_quote" class="form-input" value={work.highlight_quote ?? 'Simplicity, elegance, innovation!'}>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Body Text</label>
+              <textarea id="highlight_body" class="form-textarea" rows="6">{work.highlight_body ?? ''}</textarea>
+              <div class="form-hint">Each paragraph separated by a blank line</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="cms-card" style="margin-bottom:20px;">
+          <div class="cms-card-header">
+            <h2>Gallery</h2>
+            <span style="font-size:12px;color:#94a3b8;">Images & videos displayed on the project page</span>
+          </div>
+          <div class="cms-card-body">
+            <div id="gallery-list"><p style="color:#94a3b8;font-size:13px;">Loading…</p></div>
+
+            <div class="add-image-box">
+              <div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:10px;">Add Image / Video</div>
+              <div class="form-group">
+                <label class="form-label" style="font-size:12px;">URL</label>
+                <input type="text" id="new-img-url" class="form-input" placeholder="/img/works/project/1.png or video.mp4">
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                <div style="flex:1;min-width:120px;">
+                  <label class="form-label" style="font-size:12px;">Type</label>
+                  <select id="new-img-type" class="form-select">
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <div style="flex:1;min-width:120px;">
+                  <label class="form-label" style="font-size:12px;">Layout</label>
+                  <select id="new-img-layout" class="form-select">
+                    <option value="full">Full Width</option>
+                    <option value="half">Half Width (pair)</option>
+                  </select>
+                </div>
+                <div style="flex:2;min-width:160px;">
+                  <label class="form-label" style="font-size:12px;">Alt Text</label>
+                  <input type="text" id="new-img-alt" class="form-input" placeholder="Description">
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="addImage()">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div>
+        <div class="cms-card" style="margin-bottom:16px;">
+          <div class="cms-card-header"><h2>Settings</h2></div>
+          <div class="cms-card-body">
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select id="status" class="form-select">
+                <option value="draft" selected={work.status === 'draft'}>Draft</option>
+                <option value="published" selected={work.status === 'published'}>Published</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cover Image (listing page)</label>
+              <input type="text" id="cover_image" class="form-input" value={work.cover_image ?? ''}>
+              {work.cover_image && (
+                <img src={work.cover_image} alt="cover" style="margin-top:8px;width:100%;max-height:120px;object-fit:cover;border-radius:6px;border:1px solid #e2e8f0;" />
+              )}
+            </div>
+            <div class="form-group">
+              <label class="form-label">Logo URL</label>
+              <input type="text" id="logo_url" class="form-input" value={work.logo_url ?? ''}>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Banner URL</label>
+              <input type="text" id="banner_url" class="form-input" value={work.banner_url ?? ''}>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Banner Type</label>
+              <select id="banner_type" class="form-select">
+                <option value="video" selected={work.banner_type === 'video'}>Video</option>
+                <option value="image" selected={work.banner_type === 'image'}>Image</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="cms-card" style="margin-bottom:16px;">
+          <div class="cms-card-header"><h2>Colors</h2></div>
+          <div class="cms-card-body">
+            <div class="form-group">
+              <label class="form-label">Page Background</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" id="bg_color_picker" value={work.bg_color ?? '#e9e8e9'} style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:2px;" oninput="document.getElementById('bg_color').value=this.value">
+                <input type="text" id="bg_color" class="form-input" value={work.bg_color ?? '#e9e8e9'} style="flex:1;" oninput="document.getElementById('bg_color_picker').value=this.value">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gallery Background</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" id="grid_bg_color_picker" value={work.grid_bg_color ?? '#dedbdf'} style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:2px;" oninput="document.getElementById('grid_bg_color').value=this.value">
+                <input type="text" id="grid_bg_color" class="form-input" value={work.grid_bg_color ?? '#dedbdf'} style="flex:1;" oninput="document.getElementById('grid_bg_color_picker').value=this.value">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category Label Color</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" id="accent_color_picker" value={work.accent_color ?? '#000000'} style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:2px;" oninput="document.getElementById('accent_color').value=this.value">
+                <input type="text" id="accent_color" class="form-input" value={work.accent_color ?? '#000000'} style="flex:1;" oninput="document.getElementById('accent_color_picker').value=this.value">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cms-card" style="margin-bottom:16px;">
+          <div class="cms-card-header"><h2>SEO Meta</h2></div>
+          <div class="cms-card-body">
+            <div class="form-group">
+              <label class="form-label">Meta Title</label>
+              <input type="text" id="meta_title" class="form-input" value={work.meta_title ?? ''} placeholder="Defaults to project title">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meta Description</label>
+              <textarea id="meta_description" class="form-textarea" rows="3">{work.meta_description ?? ''}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" id="submit-btn">
+          Save Changes
+        </button>
+      </div>
+
+    </div>
+  </form>
+</CMSLayout>
+
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js" is:inline></script>
+<script define:vars={{ overviewJson, workId }}>
+  // ── Quill ──
+  const quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic','underline'],['blockquote'],['link'],['clean']] }
+  });
+  if (overviewJson) {
+    try { const h = JSON.parse(overviewJson); if (h) quill.root.innerHTML = h; } catch {}
+  }
+
+  // ── Save work ──
+  document.getElementById('work-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    document.getElementById('overview').value = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    const data = {
+      title: document.getElementById('title').value,
+      slug: document.getElementById('slug').value,
+      client_name: document.getElementById('client_name').value,
+      category: document.getElementById('category').value,
+      year: document.getElementById('year').value,
+      website_url: document.getElementById('website_url').value,
+      logo_url: document.getElementById('logo_url').value,
+      cover_image: document.getElementById('cover_image').value,
+      banner_url: document.getElementById('banner_url').value,
+      banner_type: document.getElementById('banner_type').value,
+      bg_color: document.getElementById('bg_color').value,
+      grid_bg_color: document.getElementById('grid_bg_color').value,
+      accent_color: document.getElementById('accent_color').value,
+      overview: document.getElementById('overview').value,
+      highlight_quote: document.getElementById('highlight_quote').value,
+      highlight_body: document.getElementById('highlight_body').value,
+      meta_title: document.getElementById('meta_title').value,
+      meta_description: document.getElementById('meta_description').value,
+      status: document.getElementById('status').value,
+    };
+
+    try {
+      const res = await fetch(`/api/cms/works/${workId}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      const alertEl = document.getElementById('alert-container');
+      if (res.ok) {
+        alertEl.innerHTML = `<div class="alert alert-success">Work saved successfully!</div>`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alertEl.innerHTML = `<div class="alert alert-error">${json.error || 'Failed to save.'}</div>`;
+      }
+    } catch {
+      document.getElementById('alert-container').innerHTML = `<div class="alert alert-error">Server error.</div>`;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save Changes';
+    }
+  });
+
+  // ── Gallery ──
+  let images = [];
+
+  async function loadImages() {
+    const res = await fetch(`/api/cms/works/${workId}/images`);
+    images = await res.json();
+    renderImages();
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderImages() {
+    const el = document.getElementById('gallery-list');
+    if (!images.length) {
+      el.innerHTML = '<p style="color:#94a3b8;font-size:13px;padding:4px 0;">No images yet. Add one below.</p>';
+      return;
+    }
+    el.innerHTML = images.map((img, i) => `
+      <div class="gallery-item" id="gi-${img.id}">
+        <div>
+          ${img.type === 'video'
+            ? `<div class="gallery-thumb-video">▶ video</div>`
+            : `<img src="${esc(img.url)}" class="gallery-thumb" onerror="this.style.background='#f1f5f9'" />`
+          }
+        </div>
+        <div class="gallery-fields">
+          <input class="form-input" style="font-size:12.5px;" value="${esc(img.url)}" onchange="updateImg(${img.id},'url',this.value)" placeholder="URL">
+          <div class="gallery-field-row">
+            <select onchange="updateImg(${img.id},'type',this.value)">
+              <option value="image" ${img.type==='image'?'selected':''}>Image</option>
+              <option value="video" ${img.type==='video'?'selected':''}>Video</option>
+            </select>
+            <select onchange="updateImg(${img.id},'layout',this.value)">
+              <option value="full" ${img.layout==='full'?'selected':''}>Full Width</option>
+              <option value="half" ${img.layout==='half'?'selected':''}>Half Width</option>
+            </select>
+            <input class="form-input" style="font-size:12.5px;" value="${esc(img.alt_text)}" onchange="updateImg(${img.id},'alt_text',this.value)" placeholder="Alt text">
+          </div>
+        </div>
+        <div class="gallery-controls">
+          <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px;" onclick="moveImg(${img.id},'up')" ${i===0?'disabled':''}>↑</button>
+          <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px;" onclick="moveImg(${img.id},'down')" ${i===images.length-1?'disabled':''}>↓</button>
+          <button type="button" class="btn btn-danger btn-sm" style="padding:3px 8px;" onclick="delImg(${img.id})">×</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function updateImg(id, field, value) {
+    await fetch(`/api/cms/work-images/${id}`, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ [field]: value }),
+    });
+    if (field === 'type' || field === 'url') { images = await (await fetch(`/api/cms/works/${workId}/images`)).json(); renderImages(); }
+  }
+
+  async function moveImg(id, direction) {
+    const idx = images.findIndex(i => i.id === id);
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= images.length) return;
+    await Promise.all([
+      fetch(`/api/cms/work-images/${images[idx].id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sort_order: images[swapIdx].sort_order }) }),
+      fetch(`/api/cms/work-images/${images[swapIdx].id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sort_order: images[idx].sort_order }) }),
+    ]);
+    await loadImages();
+  }
+
+  async function delImg(id) {
+    if (!confirm('Remove this image?')) return;
+    await fetch(`/api/cms/work-images/${id}`, { method: 'DELETE' });
+    await loadImages();
+  }
+
+  async function addImage() {
+    const url    = document.getElementById('new-img-url').value.trim();
+    const type   = document.getElementById('new-img-type').value;
+    const layout = document.getElementById('new-img-layout').value;
+    const alt    = document.getElementById('new-img-alt').value;
+    if (!url) { alert('Please enter a URL.'); return; }
+    await fetch(`/api/cms/works/${workId}/images`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ url, type, layout, alt_text: alt }),
+    });
+    document.getElementById('new-img-url').value = '';
+    document.getElementById('new-img-alt').value = '';
+    await loadImages();
+  }
+
+  function deleteWork(id, title) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    fetch(`/api/cms/works/${id}`, { method: 'DELETE' })
+      .then(r => r.ok ? window.location.href = '/cms/works' : alert('Delete failed.'));
+  }
+  window.deleteWork = deleteWork;
+  window.addImage = addImage;
+  window.moveImg = moveImg;
+  window.delImg = delImg;
+  window.updateImg = updateImg;
+
+  loadImages();
+</script>

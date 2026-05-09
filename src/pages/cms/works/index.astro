@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+
+import CMSLayout from '../../../layouts/CMSLayout.astro';
+import { getSessionUser } from '../../../lib/auth';
+import { query } from '../../../lib/db';
+
+const user = await getSessionUser(Astro.cookies.get('session')?.value);
+if (!user) return Astro.redirect('/cms/login');
+
+const works = await query(
+  `SELECT id, title, slug, client_name, category, year, cover_image, status, sort_order
+   FROM works ORDER BY sort_order ASC, created_at DESC`
+).then(r => r.rows).catch(() => []);
+
+const totalPublished = works.filter((w: any) => w.status === 'published').length;
+const totalDraft     = works.filter((w: any) => w.status === 'draft').length;
+---
+
+<CMSLayout title="Works" user={user} currentPage="works">
+
+  <div class="stat-cards" style="margin-bottom:24px;">
+    <div class="stat-card">
+      <div class="stat-label">Total</div>
+      <div class="stat-value">{works.length}</div>
+      <div class="stat-sub">portfolio items</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Published</div>
+      <div class="stat-value" style="color:#10b981">{totalPublished}</div>
+      <div class="stat-sub">live on site</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Draft</div>
+      <div class="stat-value" style="color:#f59e0b">{totalDraft}</div>
+      <div class="stat-sub">not visible</div>
+    </div>
+  </div>
+
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <h2>Portfolio Works</h2>
+      <a href="/cms/works/new" class="btn btn-primary btn-sm">+ New Work</a>
+    </div>
+
+    {works.length === 0 ? (
+      <div class="cms-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <p>No works yet. <a href="/cms/works/new" style="color:#6366f1">Add your first project →</a></p>
+      </div>
+    ) : (
+      <div style="overflow-x:auto;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th style="width:50px">Order</th>
+              <th>Project</th>
+              <th>Client</th>
+              <th>Category</th>
+              <th>Year</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {works.map((w: any, i: number) => (
+              <tr id={`row-${w.id}`}>
+                <td style="text-align:center;">
+                  <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
+                    <button class="btn btn-secondary btn-sm" style="padding:2px 7px;font-size:11px;" onclick={`moveWork(${w.id},'up')`} disabled={i === 0}>↑</button>
+                    <span style="font-size:12px;color:#94a3b8;">{w.sort_order}</span>
+                    <button class="btn btn-secondary btn-sm" style="padding:2px 7px;font-size:11px;" onclick={`moveWork(${w.id},'down')`} disabled={i === works.length - 1}>↓</button>
+                  </div>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    {w.cover_image && (
+                      <img src={w.cover_image} alt={w.title} style="width:52px;height:36px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0;flex-shrink:0;" />
+                    )}
+                    <div>
+                      <div style="font-weight:600;color:#0f172a;">{w.title}</div>
+                      <div style="font-size:11.5px;color:#94a3b8;">/work/{w.slug}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="color:#475569;">{w.client_name || '—'}</td>
+                <td style="color:#475569;font-size:12.5px;">{w.category || '—'}</td>
+                <td style="color:#94a3b8;">{w.year || '—'}</td>
+                <td>
+                  <span class={`badge ${w.status === 'published' ? 'badge-success' : 'badge-warning'}`}>
+                    {w.status}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-row">
+                    <a href={`/cms/works/${w.id}`} class="btn btn-secondary btn-sm">Edit</a>
+                    <a href={`/work/${w.slug}`} target="_blank" class="btn btn-secondary btn-sm">View</a>
+                    <button class="btn btn-danger btn-sm" onclick={`deleteWork(${w.id},'${w.title.replace(/'/g,"\\'")}')`}>Delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+
+</CMSLayout>
+
+<script is:inline>
+  async function deleteWork(id, title) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    const res = await fetch(`/api/cms/works/${id}`, { method: 'DELETE' });
+    if (res.ok) window.location.reload();
+    else alert('Delete failed.');
+  }
+
+  async function moveWork(id, direction) {
+    const rows = [...document.querySelectorAll('tbody tr')];
+    const idx  = rows.findIndex(r => r.id === `row-${id}`);
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= rows.length) return;
+
+    const swapId = rows[swapIdx].id.replace('row-', '');
+    const myOrder   = parseInt(rows[idx].querySelector('span').textContent);
+    const swapOrder = parseInt(rows[swapIdx].querySelector('span').textContent);
+
+    await Promise.all([
+      fetch(`/api/cms/works/${id}`,     { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sort_order: swapOrder }) }),
+      fetch(`/api/cms/works/${swapId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sort_order: myOrder }) }),
+    ]);
+    window.location.reload();
+  }
+</script>

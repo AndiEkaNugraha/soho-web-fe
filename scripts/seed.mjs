@@ -378,8 +378,182 @@ try {
     console.log(`  ✓ Article [${a.type}]: ${a.title}`);
   }
 
+  // ── Works ────────────────────────────────────────────────────────────────
+  const HIGHLIGHT_BODY = `Kami hidup dari ide-ide besar dan teknologi. Di Soho, kami mengubah visi menjadi solusi digital yang nyata dari pengembangan website dan sistem, hingga strategi IT yang mendorong bisnis ke level berikutnya.
+
+Dengan perpaduan keahlian di bidang desain, teknologi, dan konsultasi, kami menciptakan pengalaman digital yang tidak hanya terlihat menarik, tapi juga berfungsi dengan sempurna. Setiap proyek kami lahir dari kolaborasi erat, inovasi, dan semangat untuk menghadirkan solusi yang melampaui ekspektasi.
+
+Kami tidak hanya membangun website atau sistem, kami membangun fondasi digital yang membuat bisnis Anda tumbuh, dikenal, dan dipercaya.`;
+
+  const works = [
+    {
+      title:        'Website Development Oliv+ Care™',
+      slug:         'oliv-plus-care',
+      client_name:  'Oliv+ Care™',
+      category:     'Website Design & Development',
+      year:         '2025',
+      website_url:  'https://olivpluscare.com',
+      logo_url:     '/logo/oliv.png',
+      cover_image:  '/img/works/oliv/1.png',
+      banner_url:   '/img/works/oliv/banner.mp4',
+      banner_type:  'video',
+      bg_color:     '#e9e8e9',
+      grid_bg_color:'#dedbdf',
+      accent_color: 'crimson',
+      overview: `<p><strong>olivpluscare.com</strong> adalah website resmi <em>Oliv+ Care™</em> dari GWS Wellness, yang bergerak di bidang perawatan kulit feminin. Website ini dikembangkan sebagai company profile sekaligus media informasi produk, dengan tujuan membangun kepercayaan brand, menyampaikan nilai produk, dan mengarahkan pengguna ke kanal pembelian resmi.</p>
+<p>Dalam proyek ini, website dirancang dengan pendekatan user-friendly, visual yang feminin dan modern, serta struktur konten yang jelas agar mudah dipahami oleh target audiens perempuan.</p>
+<h4>Fitur Utama &amp; Pendekatan Pengembangan</h4>
+<ul>
+<li>Website menyajikan halaman produk, artikel edukasi, dan informasi brand secara terstruktur untuk meningkatkan kredibilitas dan pengalaman pengguna.</li>
+<li>Tampilan website dioptimalkan agar nyaman digunakan di berbagai perangkat, baik desktop maupun mobile.</li>
+<li>Fitur Content Management System (CMS) yang memungkinkan pengelolaan konten secara efisien dan efektif.</li>
+<li>Desain visual disesuaikan dengan karakter brand yang feminin, lembut, dan berorientasi pada kenyamanan pengguna.</li>
+</ul>
+<p>Website Olivpluscare.com dikembangkan sebagai platform digital untuk memperkuat identitas brand perawatan kulit feminin melalui desain modern, navigasi sederhana, dan konten yang informatif. Proyek ini menekankan keseimbangan antara estetika visual, kejelasan informasi, dan kemudahan akses pengguna.</p>`,
+      highlight_quote: 'Simplicity, elegance, innovation!',
+      highlight_body: HIGHLIGHT_BODY,
+      meta_title: 'Oliv+ Care™ Website Development | Soho Solusi Digital',
+      meta_description: 'Developed the official Oliv+ Care™ website — a feminine skincare product platform featuring modern UI, responsive design, and marketplace integration.',
+      status: 'published',
+      sort_order: 1,
+      images: [
+        { url: '/img/works/oliv/1.png',   type: 'image', layout: 'full', alt: 'Oliv+ Care website' },
+        { url: '/img/works/oliv/2.mp4',   type: 'video', layout: 'full', alt: '' },
+        { url: '/img/works/oliv/3.png',   type: 'image', layout: 'full', alt: 'Oliv+ Care design' },
+        { url: '/img/works/oliv/4.png',   type: 'image', layout: 'half', alt: 'Oliv+ Care detail' },
+        { url: '/img/works/oliv/5.png',   type: 'image', layout: 'half', alt: 'Oliv+ Care detail' },
+        { url: '/img/works/oliv/6.png',   type: 'image', layout: 'full', alt: 'Oliv+ Care page' },
+        { url: '/img/works/oliv/7.png',   type: 'image', layout: 'full', alt: 'Oliv+ Care page' },
+      ],
+    },
+    {
+      title:        'Website Development Sercova',
+      slug:         'sercova',
+      client_name:  'Sercova',
+      category:     'Website Design & Development',
+      year:         '2025',
+      website_url:  'https://sercova.id/en',
+      logo_url:     '/logo/sercova.png',
+      cover_image:  '/img/works/sercova/sercova1.png',
+      banner_url:   '/img/works/sercova/IMG_0699.MP4',
+      banner_type:  'video',
+      bg_color:     '#e9e8e9',
+      grid_bg_color:'#e9e8e9',
+      accent_color: 'darkolivegreen',
+      overview: `<p><strong>Sercova.id</strong> adalah website resmi untuk inisiatif <em>Seram Climate and Conservation (SERCOVA)</em>, sebuah proyek yang berfokus pada manajemen hutan lestari, konservasi keanekaragaman hayati, dan pemberdayaan masyarakat di Kabupaten Seram Bagian Timur, Maluku. Website ini dirancang untuk menyampaikan visi, kegiatan, dan hasil proyek secara transparan kepada pemangku kepentingan lokal dan internasional.</p>
+<h4>Tujuan &amp; Produk yang Ditampilkan</h4>
+<ul>
+<li>Menyajikan informasi proyek dan model pengurangan emisi (mis. Improved Forest Management).</li>
+<li>Menampilkan tiga pilar utama kegiatan: <em>Climate</em>, <em>Community</em>, dan <em>Biodiversity</em>, termasuk laporan dan update lapangan.</li>
+<li>Mendukung konten bilinggual (Bahasa Indonesia &amp; Inggris) untuk jangkauan audiens yang lebih luas.</li>
+<li>Menyediakan cara bagi publik dan mitra untuk berpartisipasi atau berkontribusi pada proyek.</li>
+</ul>
+<h4>Fitur Utama &amp; Pendekatan</h4>
+<ul>
+<li>Tata letak responsif untuk pengalaman konsisten pada desktop, tablet, dan ponsel.</li>
+<li>Komponen modular untuk mempermudah pemeliharaan dan pengembangan fitur baru.</li>
+<li>Integrasi API / backend untuk konten dinamis (artikel, laporan, statistik konservasi).</li>
+<li>Optimasi SEO dan aksesibilitas dasar untuk meningkatkan jangkauan dan keterbacaan.</li>
+<li>Deployment terotomasi dan containerization untuk stabilitas lingkungan produksi.</li>
+</ul>
+<p>Website ini membantu memperkuat kredibilitas proyek SERCOVA, mempermudah komunikasi dengan donor dan mitra, serta menyediakan saluran informasi yang transparan bagi komunitas lokal dan pemangku kepentingan.</p>`,
+      highlight_quote: 'Simplicity, elegance, innovation!',
+      highlight_body: HIGHLIGHT_BODY,
+      meta_title: 'Sercova Website Development | Soho Solusi Digital',
+      meta_description: 'Developed the Sercova climate and conservation website, showcasing sustainable forest management, biodiversity insights, and community engagement.',
+      status: 'published',
+      sort_order: 2,
+      images: [
+        { url: '/img/works/sercova/sercova1.png', type: 'image', layout: 'full', alt: 'Sercova website' },
+        { url: '/img/works/sercova/sercova2.mp4', type: 'video', layout: 'full', alt: '' },
+        { url: '/img/works/sercova/sercova3.png', type: 'image', layout: 'full', alt: 'Sercova design' },
+        { url: '/img/works/sercova/sercova4.png', type: 'image', layout: 'full', alt: 'Sercova page' },
+      ],
+    },
+    {
+      title:        'Website Development Angkasa Pura Property',
+      slug:         'angkasa-pura-property',
+      client_name:  'Angkasa Pura Property',
+      category:     'Website Design & Development',
+      year:         '',
+      website_url:  'https://approperti.co.id',
+      logo_url:     '/logo/ap-logo.png',
+      cover_image:  '/img/works/iasp/1.png',
+      banner_url:   '/img/works/iasp/banner.mp4',
+      banner_type:  'video',
+      bg_color:     '#e9e8e9',
+      grid_bg_color:'#dedbdf',
+      accent_color: 'indigo',
+      overview: `<h3><strong>Overview</strong></h3>
+<p><strong>approperti.co.id</strong> adalah website resmi dari <em>Angkasa Pura Property</em>, sebuah perusahaan yang bergerak di bidang pengembangan properti dan infrastruktur penerbangan. Situs ini dirancang untuk memperkenalkan profil perusahaan, lini bisnis, serta berbagai aktivitas korporasi kepada investor, mitra, dan publik secara profesional dan transparan.</p>
+<h4>Bidang &amp; Produk yang Ditampilkan</h4>
+<ul>
+<li>Pengembangan properti dan aset strategis untuk mendukung kawasan terintegrasi, termasuk area komersial dan fasilitas pendukung.</li>
+<li>Pengembangan infrastruktur penerbangan, seperti pembangunan dan revitalisasi fasilitas bandara serta layanan terkait.</li>
+<li>Publikasi berita dan update perusahaan, termasuk kegiatan CSR/TJSL, peluncuran proyek, serta capaian dan penghargaan.</li>
+<li>Penyediaan informasi untuk investor dan mitra, termasuk laporan, profil perusahaan, dan peluang kerja sama.</li>
+</ul>
+<h4>Fitur Utama &amp; Pendekatan</h4>
+<ul>
+<li>Tata letak bersih dan profesional dengan navigasi yang memudahkan pengunjung mengakses informasi perusahaan.</li>
+<li>Konten dinamis seperti berita, galeri, dan publikasi untuk memberikan gambaran menyeluruh mengenai aktivitas Angkasa Pura Property.</li>
+<li>Penyajian data perusahaan yang transparan, termasuk struktur organisasi dan tata kelola.</li>
+<li>Dukungan platform digital internal seperti portal aplikasi dan layanan operasional berbasis web.</li>
+</ul>
+<p>Website ini berfungsi sebagai pusat informasi resmi Angkasa Pura Property Indonesia, memperkuat kredibilitas perusahaan, serta memfasilitasi komunikasi dengan para pemangku kepentingan, investor, dan publik.</p>`,
+      highlight_quote: 'Simplicity, elegance, innovation!',
+      highlight_body: HIGHLIGHT_BODY,
+      meta_title: 'Angkasa Pura Property Website | Soho Solusi Digital',
+      meta_description: 'Built the official Angkasa Pura Property corporate website, highlighting property and aviation infrastructure services with professional layout and dynamic content.',
+      status: 'published',
+      sort_order: 3,
+      images: [
+        { url: '/img/works/iasp/1.png',       type: 'image', layout: 'full', alt: 'Angkasa Pura Property website' },
+        { url: '/img/works/iasp/video.mp4',   type: 'video', layout: 'full', alt: '' },
+        { url: '/img/works/iasp/2.png',       type: 'image', layout: 'full', alt: 'Angkasa Pura Property design' },
+        { url: '/img/works/iasp/3.png',       type: 'image', layout: 'full', alt: 'Angkasa Pura Property page' },
+        { url: '/img/works/iasp/4.png',       type: 'image', layout: 'full', alt: 'Angkasa Pura Property page' },
+      ],
+    },
+  ];
+
+  for (const w of works) {
+    const res = await pool.query(
+      `INSERT INTO works
+         (title, slug, client_name, category, year, website_url, logo_url, cover_image,
+          banner_url, banner_type, bg_color, grid_bg_color, accent_color,
+          overview, highlight_quote, highlight_body, meta_title, meta_description,
+          status, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+       ON CONFLICT (slug) DO NOTHING
+       RETURNING id`,
+      [
+        w.title, w.slug, w.client_name, w.category, w.year,
+        w.website_url, w.logo_url, w.cover_image,
+        w.banner_url, w.banner_type, w.bg_color, w.grid_bg_color, w.accent_color,
+        w.overview, w.highlight_quote, w.highlight_body,
+        w.meta_title, w.meta_description, w.status, w.sort_order,
+      ]
+    );
+
+    const workId = res.rows[0]?.id;
+    console.log(`  ${workId ? '✓' : '–'} Work: ${w.title}${workId ? '' : ' (skipped, already exists)'}`);
+
+    if (workId) {
+      for (let i = 0; i < w.images.length; i++) {
+        const img = w.images[i];
+        await pool.query(
+          `INSERT INTO work_images (work_id, url, type, layout, alt_text, sort_order)
+           VALUES ($1,$2,$3,$4,$5,$6)`,
+          [workId, img.url, img.type, img.layout, img.alt, i + 1]
+        );
+      }
+      console.log(`     → ${w.images.length} images inserted`);
+    }
+  }
+
   console.log('\n✅ Seed complete.');
-  console.log(`   ${categories.length} categories, ${articles.length} articles inserted.`);
+  console.log(`   ${categories.length} categories, ${articles.length} articles, ${works.length} works seeded.`);
 } catch (err) {
   console.error('❌ Seed failed:', err.message);
   process.exit(1);
