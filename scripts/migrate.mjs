@@ -25,6 +25,10 @@ try {
   const sqlV3 = readFileSync(join(__dir, 'migrate-v3.sql'), 'utf8');
   await pool.query(sqlV3);
 
+  console.log('🔄 Running v4 migration...');
+  const sqlV4 = readFileSync(join(__dir, 'migrate-v4.sql'), 'utf8');
+  await pool.query(sqlV4);
+
   console.log('✅ Migration complete.');
 } catch (err) {
   console.error('❌ Migration failed:', err.message);

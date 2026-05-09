@@ -203,6 +203,14 @@ const { title, user, currentPage } = Astro.props;
           <span>Works</span>
         </a>
 
+        <span class="cms-nav-label" style="margin-top:12px">Settings</span>
+        <a href="/cms/seo" class={currentPage === 'seo' ? 'active' : ''}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>SEO Settings</span>
+        </a>
+
         <span class="cms-nav-label" style="margin-top:12px">Inquiries</span>
         <a href="/cms/contacts" class={currentPage === 'contacts' ? 'active' : ''}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

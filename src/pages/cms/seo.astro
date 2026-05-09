@@ -1,0 +1,143 @@
+---
+export const prerender = false;
+
+import CMSLayout from '../../layouts/CMSLayout.astro';
+import { getSessionUser } from '../../lib/auth';
+import { query } from '../../lib/db';
+
+const user = await getSessionUser(Astro.cookies.get('session')?.value);
+if (!user) return Astro.redirect('/cms/login');
+
+const pages = await query('SELECT * FROM page_seo ORDER BY id ASC')
+  .then(r => r.rows).catch(() => []);
+---
+
+<CMSLayout title="SEO Settings" user={user} currentPage="seo">
+
+  <div class="cms-card" style="margin-bottom: 24px;">
+    <div class="cms-card-header">
+      <h2>SEO Settings</h2>
+      <span style="font-size:13px; color:#94a3b8;">Applies to all static pages</span>
+    </div>
+    <div style="padding: 16px 22px; background:#f0fdf4; border-bottom: 1px solid #e2e8f0; font-size:13px; color:#166534; border-radius: 0;">
+      💡 Meta Title direkomendasikan 50–60 karakter. Meta Description direkomendasikan 120–160 karakter.
+      Kosongkan OG Image untuk menggunakan logo default.
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    {pages.map((p: any) => (
+      <div class="cms-card" id={`card-${p.page_key}`}>
+        <div class="cms-card-header">
+          <div>
+            <h3 style="font-size:14px; font-weight:700; color:#0f172a;">{p.page_label}</h3>
+            <span style="font-size:11.5px; color:#94a3b8; font-family:monospace;">/{p.page_key === 'home' ? '' : p.page_key.replace('service-website','service/website-design-and-development').replace('service-software','service/custom-software-development').replace('service-it','service/it-consultation')}</span>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            onclick={`saveSeo('${p.page_key}')`}
+            id={`btn-${p.page_key}`}
+          >Save</button>
+        </div>
+        <div class="cms-card-body">
+          <div class="form-group">
+            <label class="form-label">
+              Meta Title
+              <span id={`tc-${p.page_key}`} style="font-weight:400; color:#94a3b8; margin-left:6px; font-size:11px;">{(p.meta_title || '').length}/60</span>
+            </label>
+            <input
+              type="text"
+              id={`title-${p.page_key}`}
+              class="form-input"
+              value={p.meta_title || ''}
+              maxlength="100"
+              oninput={`updateCount('${p.page_key}', this.value)`}
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              Meta Description
+              <span id={`dc-${p.page_key}`} style="font-weight:400; color:#94a3b8; margin-left:6px; font-size:11px;">{(p.meta_description || '').length}/160</span>
+            </label>
+            <textarea
+              id={`desc-${p.page_key}`}
+              class="form-textarea"
+              rows="3"
+              maxlength="300"
+              oninput={`updateDescCount('${p.page_key}', this.value)`}
+            >{p.meta_description || ''}</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">OG Image URL</label>
+            <input
+              type="text"
+              id={`img-${p.page_key}`}
+              class="form-input"
+              value={p.og_image || ''}
+              placeholder="/img/og/page.jpg or https://…"
+            >
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+</CMSLayout>
+
+<style is:global>
+  @media (max-width: 900px) {
+    #seo-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<script is:inline>
+  function updateCount(key, value) {
+    const el = document.getElementById(`tc-${key}`);
+    if (el) {
+      el.textContent = `${value.length}/60`;
+      el.style.color = value.length > 60 ? '#ef4444' : '#94a3b8';
+    }
+  }
+
+  function updateDescCount(key, value) {
+    const el = document.getElementById(`dc-${key}`);
+    if (el) {
+      el.textContent = `${value.length}/160`;
+      el.style.color = value.length > 160 ? '#ef4444' : '#94a3b8';
+    }
+  }
+
+  async function saveSeo(key) {
+    const btn = document.getElementById(`btn-${key}`);
+    const meta_title       = document.getElementById(`title-${key}`).value;
+    const meta_description = document.getElementById(`desc-${key}`).value;
+    const og_image         = document.getElementById(`img-${key}`).value;
+
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const res = await fetch(`/api/cms/seo/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meta_title, meta_description, og_image }),
+      });
+
+      if (res.ok) {
+        btn.textContent = 'Saved ✓';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+          btn.textContent = 'Save';
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 2000);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      alert('Failed to save. Please try again.');
+      btn.textContent = 'Save';
+      btn.disabled = false;
+    }
+  }
+</script>

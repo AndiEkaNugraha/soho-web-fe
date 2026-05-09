@@ -3,6 +3,9 @@ export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { query } from '../lib/db';
+import { getPageSeo } from '../lib/seo';
+
+const seo = await getPageSeo('works');
 
 const works = await query(
   `SELECT id, title, slug, client_name, category, year, cover_image, accent_color
@@ -11,8 +14,9 @@ const works = await query(
 ---
 
 <BaseLayout
-  title="Works | Soho Solusi Digital"
-  description="Explore our portfolio — websites, custom software, and digital systems we've built for clients across Indonesia."
+  title={seo?.meta_title || 'Works | Soho Solusi Digital'}
+  description={seo?.meta_description || 'Explore our portfolio of websites, custom software, and digital systems.'}
+  ogImage={seo?.og_image || ''}
 >
   <div class="mil-content">
     <div class="mil-main-transition">

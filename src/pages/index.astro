@@ -1,8 +1,15 @@
 ---
+export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPageSeo } from '../lib/seo';
+const seo = await getPageSeo('home');
 ---
 
-<BaseLayout title="Soho Solusi Digital" description="Empowering Businesses Through Smart Solutions. Kami membantu bisnis Anda menemukan cara terbaik untuk tumbuh, beradaptasi, dan berkembang di era digital.">
+<BaseLayout
+  title={seo?.meta_title || 'Soho Solusi Digital'}
+  description={seo?.meta_description || 'Empowering Businesses Through Smart Solutions.'}
+  ogImage={seo?.og_image || ''}
+>
       <!-- banner wrapper -->
       <div class="banner-wrapper" style="position: relative; min-height: 100vh;">        
         <!-- banner -->

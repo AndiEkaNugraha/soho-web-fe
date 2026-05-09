@@ -1,8 +1,15 @@
 ---
+export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPageSeo } from '../../lib/seo';
+const seo = await getPageSeo('service-software');
 ---
 
-<BaseLayout title="Custom Software Development | Soho Soho Solusi Digital" description="Kami mengembangkan perangkat lunak yang didesain sepenuhnya sesuai kebutuhan bisnis Anda. Solusi efisien untuk menghemat waktu, menekan biaya, dan meningkatkan produktivitas tim Anda.">
+<BaseLayout
+  title={seo?.meta_title || 'Custom Software Development | Soho Solusi Digital'}
+  description={seo?.meta_description || 'Perangkat lunak yang didesain sepenuhnya sesuai kebutuhan bisnis Anda.'}
+  ogImage={seo?.og_image || ''}
+>
       <!-- banner -->
       <div class="mil-inner-banner">
         <div class="mil-banner-content mil-up">

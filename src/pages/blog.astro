@@ -3,6 +3,9 @@ export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { query } from '../lib/db';
+import { getPageSeo } from '../lib/seo';
+
+const seo = await getPageSeo('blog');
 
 const PAGE_SIZE = 8; // 2 featured + 6 grid
 
@@ -102,7 +105,11 @@ function pageRange(cur: number, tot: number): (number | null)[] {
 const pages = pageRange(page, totalPages);
 ---
 
-<BaseLayout title="Blog | Soho Solusi Digital" description="Latest news, insights and articles from Soho Solusi Digital.">
+<BaseLayout
+  title={seo?.meta_title || 'Blog | Soho Solusi Digital'}
+  description={seo?.meta_description || 'Latest news, insights and articles from Soho Solusi Digital.'}
+  ogImage={seo?.og_image || ''}
+>
   <div class="mil-content">
     <div class="mil-main-transition">
 
