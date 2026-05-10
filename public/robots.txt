@@ -3,4 +3,4 @@ Allow: /
 Disallow: /cms/
 Disallow: /api/
 
-Sitemap: https://sohosolusidigital.com/sitemap.xml
+Sitemap: https://sohodigital.id/sitemap.xml

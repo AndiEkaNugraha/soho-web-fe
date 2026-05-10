@@ -160,7 +160,7 @@ const pages = pageRange(page, totalPages);
                       </div>
                       <div class="mil-description">
                         <div class="mil-blog-info">
-                          <div class="mil-info mil-up mil-mb-30">
+                          <div class="mil-info mil-up mil-mb-30" style="padding:0px; padding-bottom: 10px; height:fit-content">
                             <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
                             {article.author_name   && <div>Author: &nbsp;<span class="mil-dark">{article.author_name}</span></div>}
                             {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
@@ -195,7 +195,7 @@ const pages = pageRange(page, totalPages);
                             </div>
                             <div class="mil-description">
                               <div class="mil-blog-info">
-                                <div class="mil-info mil-up mil-mb-20" style="font-size:12px;">
+                                <div class="mil-info mil-up mil-mb-20" style="padding:0px; padding-bottom: 10px; height:fit-content;font-size:12px;">
                                   <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
                                   {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
                                 </div>
@@ -293,6 +293,12 @@ const pages = pageRange(page, totalPages);
 </BaseLayout>
 
 <style is:global>
+  .mil-cover img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
   .mil-pagination {
     display: flex;
     align-items: center;

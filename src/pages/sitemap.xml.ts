@@ -3,7 +3,7 @@ export const prerender = false;
 import { query } from '../lib/db';
 
 export async function GET() {
-  const site = (import.meta.env.SITE_URL || 'https://sohosolusidigital.com').replace(/\/$/, '');
+  const site = (import.meta.env.SITE_URL || 'https://sohodigital.id').replace(/\/$/, '');
 
   const staticPages = [
     { path: '/',                                      priority: '1.0', freq: 'weekly' },
