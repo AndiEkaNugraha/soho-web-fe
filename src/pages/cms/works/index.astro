@@ -82,7 +82,7 @@ const totalDraft     = works.filter((w: any) => w.status === 'draft').length;
                     )}
                     <div>
                       <div style="font-weight:600;color:#0f172a;">{w.title}</div>
-                      <div style="font-size:11.5px;color:#94a3b8;">/work/{w.slug}</div>
+                      <div style="font-size:11.5px;color:#94a3b8;">/portofolio/{w.slug}</div>
                     </div>
                   </div>
                 </td>
@@ -97,7 +97,7 @@ const totalDraft     = works.filter((w: any) => w.status === 'draft').length;
                 <td>
                   <div class="action-row">
                     <a href={`/cms/works/${w.id}`} class="btn btn-secondary btn-sm">Edit</a>
-                    <a href={`/work/${w.slug}`} target="_blank" class="btn btn-secondary btn-sm">View</a>
+                    <a href={`/portofolio/${w.slug}`} target="_blank" class="btn btn-secondary btn-sm">View</a>
                     <button class="btn btn-danger btn-sm" onclick={`deleteWork(${w.id},'${w.title.replace(/'/g,"\\'")}')`}>Delete</button>
                   </div>
                 </td>

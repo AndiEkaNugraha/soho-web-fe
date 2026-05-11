@@ -55,13 +55,13 @@ const highlightParagraphs = (work.highlight_body || '')
       </div>
       <div class="container">
         <ul class="mil-breadcrumbs mil-mb-60">
-          <li><a href="/">Homepage</a></li>
-          <li><a href="/works">Works</a></li>
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/portofolio">Portofolio</a></li>
           <li>{work.client_name || work.title}</li>
         </ul>
         <h1 class="mil-mb-60">{work.category ? `${work.category} ` : ''}<span class="mil-thin">{work.client_name || work.title}</span></h1>
         <a href="#project" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
-          <span>Read more</span>
+          <span>Baca Selengkapnya</span>
         </a>
       </div>
     </div>
@@ -83,8 +83,8 @@ const highlightParagraphs = (work.highlight_body || '')
       )}
 
       <div class="mil-info mil-up" style="margin-top:24px;">
-        {work.client_name && <div>Client: &nbsp;<span class="mil-dark">{work.client_name}</span></div>}
-        {work.year        && <div>Date: &nbsp;<span class="mil-dark">{work.year}</span></div>}
+        {work.client_name && <div>Klien: &nbsp;<span class="mil-dark">{work.client_name}</span></div>}
+        {work.year        && <div>Tanggal: &nbsp;<span class="mil-dark">{work.year}</span></div>}
       </div>
 
       {/* Overview */}
@@ -151,7 +151,7 @@ const highlightParagraphs = (work.highlight_body || '')
               <p class="mil-up" class:list={[idx < highlightParagraphs.length - 1 ? 'mil-mb-30' : 'mil-mb-60']}>{p}</p>
             ))}
             <div class="mil-up">
-              <a href="/contact" class="mil-button mil-arrow-place"><span>Get in touch</span></a>
+              <a href="/contact" class="mil-button mil-arrow-place"><span>Hubungi Kami</span></a>
             </div>
           </div>
         </div>

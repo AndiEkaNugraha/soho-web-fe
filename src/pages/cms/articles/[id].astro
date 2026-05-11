@@ -23,13 +23,6 @@ const contentJson = JSON.stringify(article.content || '');
 ---
 
 <CMSLayout title={`Edit: ${article.title}`} user={user} currentPage="articles">
-  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css">
-  <style>
-    .ql-editor { min-height: 320px; font-size: 15px; font-family: inherit; }
-    .ql-toolbar { border-radius: 7px 7px 0 0; border-color: #e2e8f0 !important; }
-    .ql-container { border-radius: 0 0 7px 7px; border-color: #e2e8f0 !important; }
-    .ql-container:focus-within { border-color: #6366f1 !important; }
-  </style>
 
   <div style="margin-bottom: 16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
     <a href="/cms/articles" class="btn btn-secondary btn-sm">
@@ -70,7 +63,7 @@ const contentJson = JSON.stringify(article.content || '');
 
             <div class="form-group">
               <label class="form-label">Content</label>
-              <div id="quill-editor"></div>
+              <textarea id="content-editor"></textarea>
               <input type="hidden" id="content" name="content">
             </div>
 
@@ -150,32 +143,40 @@ const contentJson = JSON.stringify(article.content || '');
     </div>
   </form>
 
-  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" is:inline></script>
+  <script src="/tinymce/tinymce.min.js" is:inline></script>
   <script define:vars={{ contentJson, articleId: article.id }}>
-    const quill = new Quill('#quill-editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote', 'code-block'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'image'],
-          ['clean']
-        ]
-      }
+    tinymce.init({
+      selector: '#content-editor',
+      license_key: 'gpl',
+      base_url: '/tinymce',
+      suffix: '.min',
+      plugins: 'table image link lists code wordcount',
+      toolbar: 'undo redo | blocks | bold italic underline strikethrough | bullist numlist | table | link image | blockquote code | removeformat',
+      min_height: 400,
+      image_title: true,
+      automatic_uploads: true,
+      images_upload_handler: async (blobInfo) => {
+        const fd = new FormData();
+        fd.append('file', blobInfo.blob(), blobInfo.filename());
+        const res = await fetch('/api/cms/upload-image', { method: 'POST', body: fd });
+        if (!res.ok) throw new Error('Upload failed');
+        const data = await res.json();
+        return data.location;
+      },
+      content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.6; padding: 8px 16px; }',
+      setup: (editor) => {
+        editor.on('init', () => {
+          if (contentJson) {
+            try { const h = JSON.parse(contentJson); if (h) editor.setContent(h); } catch {}
+          }
+        });
+      },
     });
-
-    if (contentJson) {
-      try {
-        const html = JSON.parse(contentJson);
-        if (html) quill.root.innerHTML = html;
-      } catch {}
-    }
 
     document.getElementById('article-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      document.getElementById('content').value = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+      const _ed = tinymce.get('content-editor');
+      document.getElementById('content').value = _ed ? _ed.getContent() : '';
 
       const btn = document.getElementById('submit-btn');
       btn.disabled = true;

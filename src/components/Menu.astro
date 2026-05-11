@@ -22,24 +22,24 @@
           <nav class="mil-main-menu" id="swupMenu">
             <ul>
               <li class={Astro.url.pathname === '/' ? 'mil-active' : ''}>
-                <a href="/">Home</a>
+                <a href="/">Beranda</a>
               </li>
-              <li class={Astro.url.pathname.startsWith('/service') || Astro.url.pathname.startsWith('/services') ? 'mil-has-children mil-active' : 'mil-has-children'}>
-                <a href="#.">Services</a>
+              <li class={Astro.url.pathname.startsWith('/layanan') || Astro.url.pathname.startsWith('/services') ? 'mil-has-children mil-active' : 'mil-has-children'}>
+                <a href="#.">Layanan</a>
                 <ul style="font-size: 16px;">
-                  <li><a style="font-size: 16px;" href="/service/website-design-and-development/">Website design and development</a></li>
-                  <li><a style="font-size: 16px;" href="/service/custom-software-development/">Custom software development</a></li>
-                  <li><a style="font-size: 16px;" href="/service/it-consultation/">IT Consultation</a></li>
+                  <li><a style="font-size: 16px;" href="/layanan/website-design-and-development/">Website design and development</a></li>
+                  <li><a style="font-size: 16px;" href="/layanan/custom-software-development/">Custom software development</a></li>
+                  <li><a style="font-size: 16px;" href="/layanan/it-consultation/">IT Consultation</a></li>
                 </ul>
               </li>
-              <li class={Astro.url.pathname.startsWith('/works') || Astro.url.pathname.startsWith('/work') ? 'mil-active' : ''}>
-                <a href="/works">Works</a>
+              <li class={Astro.url.pathname.startsWith('/portofolio') || Astro.url.pathname.startsWith('/works') ? 'mil-active' : ''}>
+                <a href="/portofolio">Portofolio</a>
               </li>
               <li class={Astro.url.pathname.startsWith('/blog') ? 'mil-active' : ''}>
-                <a href="/blog">Blog</a>
+                <a href="/artikel">Artikel</a>
               </li>
               <li class={Astro.url.pathname === '/contact' ? 'mil-active' : ''}>
-                <a href="/contact">Contact</a>
+                <a href="/kontak">Kontak</a>
               </li>
             </ul>
           </nav>
@@ -55,12 +55,12 @@
                   <div class="row">
                       <div class="col-lg-7 mil-mb-60">
 
-                          <h6 class="mil-muted mil-mb-30" style="font-size: 24px;">Projects</h6>
+                          <h6 class="mil-muted mil-mb-30" style="font-size: 24px;">Portofolio</h6>
 
                           <ul class="mil-menu-list" style="font-size: 20px;">
-                            <li><a href="/work/oliv+-care" class="mil-light-soft">Oliv+ Care™</a></li>
-                              <li><a href="/work/sercova" class="mil-light-soft">Sercova</a></li>
-                              <li><a href="/work/angkasa-pura-property" class="mil-light-soft">Angkasa Pura Property</a></li>
+                            <li><a href="/portofolio/oliv-plus-care" class="mil-light-soft">Oliv+ Care™</a></li>
+                              <li><a href="/portofolio/sercova" class="mil-light-soft">Sercova</a></li>
+                              <li><a href="/portofolio/angkasa-pura-property" class="mil-light-soft">Angkasa Pura Property</a></li>
                           </ul>
 
                       </div>

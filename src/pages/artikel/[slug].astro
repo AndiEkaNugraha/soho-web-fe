@@ -36,7 +36,7 @@ try {
 if (!article) return Astro.redirect('/404');
 
 function formatDate(d: string | Date) {
-  return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'long',  year: 'numeric' });
 }
 ---
 
@@ -53,13 +53,13 @@ function formatDate(d: string | Date) {
           </div>
           <div class="container">
             <ul class="mil-breadcrumbs mil-mb-60">
-              <li><a href="/">Homepage</a></li>
-              <li><a href="/blog">Blog</a></li>
-              <li><a href={`/blog/${article.slug}`}>Post</a></li>
+              <li><a href="/">Beranda</a></li>
+              <li><a href="/artikel">List Artikel</a></li>
+              <li><a href={`/artikel/${article.slug}`}>Post</a></li>
             </ul>
             <h1 class="mil-mb-60">{article.title}</h1>
             <a href="#article" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
-              <span>Read more</span>
+              <span>Baca Selengkapnya</span>
             </a>
           </div>
         </div>
@@ -96,8 +96,8 @@ function formatDate(d: string | Date) {
                   <div class="mil-divider mil-up mil-mb-60" style="margin-top: 40px;"></div>
 
                   <div class="mil-blog-nav">
-                    <a href="/blog" class="mil-link mil-dark mil-arrow-place mil-up">
-                      <span>Back to blog</span>
+                    <a href="/artikel" class="mil-link mil-dark mil-arrow-place mil-up">
+                      <span>Kembali ke Daftar Artikel</span>
                     </a>
                   </div>
                 </div>
@@ -107,7 +107,7 @@ function formatDate(d: string | Date) {
             <!-- Recent articles (publication.astro style: square cover, col-lg-4 sidebar) -->
             {recentArticles.length > 0 && (
               <div class="col-lg-4">
-                <h4 class="mil-up mil-mb-30">Recent Articles</h4>
+                <h4 class="mil-up mil-mb-30">Artikel Terkini</h4>
                 {recentArticles.map(r => (
                   <div class="mil-blog-card mil-mb-60">
                     <div class="mil-cover mil-square mil-up">
@@ -115,7 +115,7 @@ function formatDate(d: string | Date) {
                         ? <img src={r.cover_image} alt={r.title} />
                         : <div style="background:#f0f0f0; position:absolute; inset:0;"></div>
                       }
-                      <a href={`/blog/${r.slug}`} class="mil-post-sm">
+                      <a href={`/artikel/${r.slug}`} class="mil-post-sm">
                         <div class="mil-add-frame"></div>
                         <span class="mil-h3">+</span>
                       </a>
@@ -127,11 +127,11 @@ function formatDate(d: string | Date) {
                         </div>
                       </div>
                       <h4 class="mil-up mil-mb-30">
-                        <a href={`/blog/${r.slug}`}>{r.title}</a>
+                        <a href={`/artikel/${r.slug}`}>{r.title}</a>
                       </h4>
                       {r.excerpt && <p class="mil-up mil-mb-30">{r.excerpt}</p>}
-                      <a href={`/blog/${r.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
-                        <span>Read more</span>
+                      <a href={`/artikel/${r.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
+                        <span>Baca Selengkapnya</span>
                       </a>
                     </div>
                   </div>

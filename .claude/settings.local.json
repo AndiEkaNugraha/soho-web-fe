@@ -4,7 +4,8 @@
       "Bash(grep -E \"\\\\.\\(astro|json|mjs\\)$\")",
       "Bash(npm install *)",
       "Bash(npx astro *)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(git mv *)"
     ]
   }
 }

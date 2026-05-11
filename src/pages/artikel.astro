@@ -77,7 +77,7 @@ const featured = articles.slice(0, 2);
 const rest     = articles.slice(2);
 
 function formatDate(d: string | Date) {
-  return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'long',  year: 'numeric' });
 }
 
 function pageUrl(p: number) {
@@ -86,7 +86,7 @@ function pageUrl(p: number) {
   if (catFilter)   qs.set('category', catFilter);
   if (tagFilter)   qs.set('tag', tagFilter);
   const s = qs.toString();
-  return `/blog${s ? '?' + s : ''}`;
+  return `/artikel${s ? '?' + s : ''}`;
 }
 
 // Build page range with ellipsis markers (null = gap)
@@ -121,12 +121,12 @@ const pages = pageRange(page, totalPages);
           </div>
           <div class="container">
             <ul class="mil-breadcrumbs mil-mb-60">
-              <li><a href="/">Homepage</a></li>
-              <li><a href="/blog">Blog</a></li>
+              <li><a href="/">Beranda</a></li>
+              <li><a href="/artikel">Artikel</a></li>
             </ul>
-            <h1 class="mil-mb-60">Latest <span class="mil-thin">News</span></h1>
+            <h1 class="mil-mb-60">Artikel <span class="mil-thin">Terbaru</span></h1>
             <a href="#blog" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
-              <span>Read more</span>
+              <span>Baca Selengkapnya</span>
             </a>
           </div>
         </div>
@@ -142,7 +142,7 @@ const pages = pageRange(page, totalPages);
             <div class="col-lg-8">
 
               {articles.length === 0 ? (
-                <p class="mil-up" style="color: #888; margin-top: 40px;">No articles published yet.</p>
+                <p class="mil-up" style="color: #888; margin-top: 40px;">Belum ada artikel yang dipublikasikan.</p>
               ) : (
                 <>
                   {/* ── Featured: first 2 articles full-width ── */}
@@ -153,7 +153,7 @@ const pages = pageRange(page, totalPages);
                           ? <img src={article.cover_image} alt={article.title} />
                           : <div style="background:#f0f0f0;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;">No image</div>
                         }
-                        <a href={`/blog/${article.slug}`} class="mil-post-sm">
+                        <a href={`/artikel/${article.slug}`} class="mil-post-sm">
                           <div class="mil-add-frame"></div>
                           <span class="mil-h3">+</span>
                         </a>
@@ -161,17 +161,17 @@ const pages = pageRange(page, totalPages);
                       <div class="mil-description">
                         <div class="mil-blog-info">
                           <div class="mil-info mil-up mil-mb-30" style="padding:0px; padding-bottom: 10px; height:fit-content">
-                            <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
-                            {article.author_name   && <div>Author: &nbsp;<span class="mil-dark">{article.author_name}</span></div>}
-                            {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
+                            <div>Tanggal: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
+                            {article.author_name   && <div>Penulis: &nbsp;<span class="mil-dark">{article.author_name}</span></div>}
+                            {article.category_name && <div>Kategori: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
                           </div>
                         </div>
                         <h4 class="mil-up mil-mb-30">
-                          <a href={`/blog/${article.slug}`}>{article.title}</a>
+                          <a href={`/artikel/${article.slug}`}>{article.title}</a>
                         </h4>
                         {article.excerpt && <p class="mil-up mil-mb-30">{article.excerpt}</p>}
-                        <a href={`/blog/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
-                          <span>Read more</span>
+                        <a href={`/artikel/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up">
+                          <span>Baca Selengkapnya</span>
                         </a>
                       </div>
                     </div>
@@ -188,7 +188,7 @@ const pages = pageRange(page, totalPages);
                                 ? <img src={article.cover_image} alt={article.title} />
                                 : <div style="background:#f0f0f0;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;">No image</div>
                               }
-                              <a href={`/blog/${article.slug}`} class="mil-post-sm">
+                              <a href={`/artikel/${article.slug}`} class="mil-post-sm">
                                 <div class="mil-add-frame"></div>
                                 <span class="mil-h3">+</span>
                               </a>
@@ -196,15 +196,15 @@ const pages = pageRange(page, totalPages);
                             <div class="mil-description">
                               <div class="mil-blog-info">
                                 <div class="mil-info mil-up mil-mb-20" style="padding:0px; padding-bottom: 10px; height:fit-content;font-size:12px;">
-                                  <div>Date: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
-                                  {article.category_name && <div>Category: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
+                                  <div>Tanggal: &nbsp;<span class="mil-dark">{formatDate(article.published_at)}</span></div>
+                                  {article.category_name && <div>Kategori: &nbsp;<span class="mil-dark">{article.category_name}</span></div>}
                                 </div>
                               </div>
                               <h5 class="mil-up mil-mb-20">
-                                <a href={`/blog/${article.slug}`}>{article.title}</a>
+                                <a href={`/artikel/${article.slug}`}>{article.title}</a>
                               </h5>
-                              <a href={`/blog/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up" style="font-size:13px;">
-                                <span>Read more</span>
+                              <a href={`/artikel/${article.slug}`} class="mil-link mil-dark mil-arrow-place mil-up" style="font-size:13px;">
+                                <span>Baca Selengkapnya</span>
                               </a>
                             </div>
                           </div>
@@ -246,10 +246,10 @@ const pages = pageRange(page, totalPages);
 
                 {popularPosts.length > 0 && (
                   <div class="mil-widget">
-                    <h4 class="mil-up mil-mb-30">Popular Posts</h4>
+                    <h4 class="mil-up mil-mb-30">Artikel Populer</h4>
                     <ul class="mil-blog-list mil-dark mil-up">
                       {popularPosts.map((p: any) => (
-                        <li class="mil-up"><a href={`/blog/${p.slug}`}>{p.title}</a></li>
+                        <li class="mil-up"><a href={`/artikel/${p.slug}`}>{p.title}</a></li>
                       ))}
                     </ul>
                   </div>
@@ -257,11 +257,11 @@ const pages = pageRange(page, totalPages);
 
                 {categories.length > 0 && (
                   <div class="mil-widget">
-                    <h4 class="mil-up mil-mb-30">Categories</h4>
+                    <h4 class="mil-up mil-mb-30">Kategori</h4>
                     <ul class="mil-blog-list mil-dark mil-up">
                       {categories.map((c: any) => (
                         <li class="mil-up">
-                          <a href={`/blog?category=${c.slug}`} class={catFilter === c.slug ? 'mil-active-filter' : ''}>
+                          <a href={`/artikel?category=${c.slug}`} class={catFilter === c.slug ? 'mil-active-filter' : ''}>
                             {c.name} <span>({c.count})</span>
                           </a>
                         </li>
@@ -272,10 +272,10 @@ const pages = pageRange(page, totalPages);
 
                 {allTags.length > 0 && (
                   <div class="mil-widget">
-                    <h4 class="mil-up mil-mb-30">Tags</h4>
+                    <h4 class="mil-up mil-mb-30">Tag</h4>
                     <div class="mil-tags mil-up">
                       {allTags.map(tag => (
-                        <a href={`/blog?tag=${encodeURIComponent(tag)}`} class={tagFilter === tag ? 'mil-active-filter' : ''}>{tag}</a>
+                        <a href={`/artikel?tag=${encodeURIComponent(tag)}`} class={tagFilter === tag ? 'mil-active-filter' : ''}>{tag}</a>
                       ))}
                     </div>
                   </div>

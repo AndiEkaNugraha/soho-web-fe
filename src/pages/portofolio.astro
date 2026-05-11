@@ -29,12 +29,12 @@ const works = await query(
           </div>
           <div class="container">
             <ul class="mil-breadcrumbs mil-mb-60">
-              <li><a href="/">Homepage</a></li>
-              <li><a href="/works">Portfolio</a></li>
+              <li><a href="/">Beranda</a></li>
+              <li><a href="/portofolio">Portofolio</a></li>
             </ul>
-            <h1 class="mil-mb-60">Designing a <br> Better <span class="mil-thin">World Today</span></h1>
+            <h1 class="mil-mb-60">Wujudkan Dunia <br> yang <span class="mil-thin">Lebih Baik Hari Ini</span></h1>
             <a href="#portfolio" class="mil-link mil-dark mil-arrow-place mil-down-arrow">
-              <span>Our works</span>
+              <span>Portofolio Kami</span>
             </a>
           </div>
         </div>
@@ -50,7 +50,7 @@ const works = await query(
             <div class="row justify-content-between align-items-center">
               {works.map((w: any) => (
                 <div class="col-lg-6">
-                  <a href={`/work/${w.slug}`} class="mil-portfolio-item mil-mb-60">
+                  <a href={`/portofolio/${w.slug}`} class="mil-portfolio-item mil-mb-60">
                     <div class="mil-cover-frame mil-vert mil-up" style="padding-bottom: 72%;">
                       <div class="mil-cover">
                         {w.cover_image

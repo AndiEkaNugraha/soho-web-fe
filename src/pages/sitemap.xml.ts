@@ -39,7 +39,7 @@ export async function GET() {
     <priority>0.6</priority>
   </url>`),
     ...works.map((w: any) => `  <url>
-    <loc>${site}/work/${w.slug}</loc>
+    <loc>${site}/portofolio/${w.slug}</loc>
     <lastmod>${fmt(w.updated_at)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
